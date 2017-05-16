@@ -1,0 +1,13 @@
+[submodule "mruby"]
+	path = ext/enterprise_script_service/mruby
+	url = git@github.com:mruby/mruby.git
+	branch = master
+[submodule "msgpack"]
+	path = ext/enterprise_script_service/msgpack
+	url = https://github.com/msgpack/msgpack-c.git
+[submodule "ext/enterprise_script_service/libseccomp"]
+	path = ext/enterprise_script_service/libseccomp
+	url = https://github.com/seccomp/libseccomp.git
+[submodule "tests/googletest"]
+	path = tests/googletest
+	url = https://github.com/google/googletest.git

@@ -1,0 +1,45 @@
+#!/usr/bin/env ruby
+
+require "pathname"
+require "rake"
+
+MRUBY_DIR = Pathname.new(__dir__).join("../ext/enterprise_script_service/mruby")
+raise(<<-MESSAGE) unless Dir.exist?(MRUBY_DIR.join("src"))
+
+  The mruby source code appears to be missing. Did you clone this gem with
+  submodules? If that is not the case or you are unsure, you can run the
+  following commands:
+
+    $ git submodule init
+    $ git submodule update
+
+MESSAGE
+
+def within_mruby
+  Dir.chdir(MRUBY_DIR) do
+    original_mruby_config = ENV['MRUBY_CONFIG']
+    begin
+      ENV['MRUBY_CONFIG'] = '../mruby_config.rb'
+      yield
+    ensure
+      ENV['MRUBY_CONFIG'] = original_mruby_config
+    end
+  end
+end
+
+case ARGV[0]
+when "compile"
+  within_mruby do
+    sh("ruby", "./minirake")
+  end
+when "clean"
+  within_mruby do
+    sh("ruby", "./minirake", "clean")
+  end
+when "clobber"
+  within_mruby do
+    sh("ruby", "./minirake", "deep_clean")
+  end
+else
+  puts("#{__FILE__} compile|clean|clobber")
+end

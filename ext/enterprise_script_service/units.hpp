@@ -1,0 +1,7 @@
+#ifndef ENTERPRISE_SCRIPT_SERVICE_UNITS_HPP
+#define ENTERPRISE_SCRIPT_SERVICE_UNITS_HPP
+
+#define KiB 1024
+#define MiB (1024 * KiB)
+
+#endif

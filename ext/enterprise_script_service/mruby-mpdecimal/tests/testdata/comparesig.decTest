@@ -1,0 +1,741 @@
+------------------------------------------------------------------------
+-- comparesig.decTest -- decimal comparison that signals on NaNs      --
+-- Copyright (c) Mike Cowlishaw,  1981, 2010.  All rights reserved.   --
+-- Parts copyright (c) IBM Corporation, 1981, 2008.                   --
+------------------------------------------------------------------------
+-- Please see the document "General Decimal Arithmetic Testcases"     --
+-- at http://speleotrove.com/decimal for the description of           --
+-- these testcases.                                                   --
+--                                                                    --
+-- These testcases are experimental ('beta' versions), and they       --
+-- may contain errors.  They are offered on an as-is basis.  In       --
+-- particular, achieving the same results as the tests here is not    --
+-- a guarantee that an implementation complies with any Standard      --
+-- or specification.  The tests are not exhaustive.                   --
+--                                                                    --
+-- Please send comments, suggestions, and corrections to the author:  --
+--   Mike Cowlishaw, mfc@speleotrove.com                              --
+------------------------------------------------------------------------
+version: 2.62
+
+-- This testcase is the same as compare.decTest except that both
+-- quiet and signaling NaNs raise invalid (and propagate payloads)
+
+extended: 1
+
+precision:   9
+rounding:    half_up
+maxExponent: 999
+minexponent: -999
+
+-- sanity checks
+cmsx001 comparesig  -2  -2  -> 0
+cmsx002 comparesig  -2  -1  -> -1
+cmsx003 comparesig  -2   0  -> -1
+cmsx004 comparesig  -2   1  -> -1
+cmsx005 comparesig  -2   2  -> -1
+cmsx006 comparesig  -1  -2  -> 1
+cmsx007 comparesig  -1  -1  -> 0
+cmsx008 comparesig  -1   0  -> -1
+cmsx009 comparesig  -1   1  -> -1
+cmsx010 comparesig  -1   2  -> -1
+cmsx011 comparesig   0  -2  -> 1
+cmsx012 comparesig   0  -1  -> 1
+cmsx013 comparesig   0   0  -> 0
+cmsx014 comparesig   0   1  -> -1
+cmsx015 comparesig   0   2  -> -1
+cmsx016 comparesig   1  -2  -> 1
+cmsx017 comparesig   1  -1  -> 1
+cmsx018 comparesig   1   0  -> 1
+cmsx019 comparesig   1   1  -> 0
+cmsx020 comparesig   1   2  -> -1
+cmsx021 comparesig   2  -2  -> 1
+cmsx022 comparesig   2  -1  -> 1
+cmsx023 comparesig   2   0  -> 1
+cmsx025 comparesig   2   1  -> 1
+cmsx026 comparesig   2   2  -> 0
+
+cmsx031 comparesig  -20  -20  -> 0
+cmsx032 comparesig  -20  -10  -> -1
+cmsx033 comparesig  -20   00  -> -1
+cmsx034 comparesig  -20   10  -> -1
+cmsx035 comparesig  -20   20  -> -1
+cmsx036 comparesig  -10  -20  -> 1
+cmsx037 comparesig  -10  -10  -> 0
+cmsx038 comparesig  -10   00  -> -1
+cmsx039 comparesig  -10   10  -> -1
+cmsx040 comparesig  -10   20  -> -1
+cmsx041 comparesig   00  -20  -> 1
+cmsx042 comparesig   00  -10  -> 1
+cmsx043 comparesig   00   00  -> 0
+cmsx044 comparesig   00   10  -> -1
+cmsx045 comparesig   00   20  -> -1
+cmsx046 comparesig   10  -20  -> 1
+cmsx047 comparesig   10  -10  -> 1
+cmsx048 comparesig   10   00  -> 1
+cmsx049 comparesig   10   10  -> 0
+cmsx050 comparesig   10   20  -> -1
+cmsx051 comparesig   20  -20  -> 1
+cmsx052 comparesig   20  -10  -> 1
+cmsx053 comparesig   20   00  -> 1
+cmsx055 comparesig   20   10  -> 1
+cmsx056 comparesig   20   20  -> 0
+
+cmsx061 comparesig  -2.0  -2.0  -> 0
+cmsx062 comparesig  -2.0  -1.0  -> -1
+cmsx063 comparesig  -2.0   0.0  -> -1
+cmsx064 comparesig  -2.0   1.0  -> -1
+cmsx065 comparesig  -2.0   2.0  -> -1
+cmsx066 comparesig  -1.0  -2.0  -> 1
+cmsx067 comparesig  -1.0  -1.0  -> 0
+cmsx068 comparesig  -1.0   0.0  -> -1
+cmsx069 comparesig  -1.0   1.0  -> -1
+cmsx070 comparesig  -1.0   2.0  -> -1
+cmsx071 comparesig   0.0  -2.0  -> 1
+cmsx072 comparesig   0.0  -1.0  -> 1
+cmsx073 comparesig   0.0   0.0  -> 0
+cmsx074 comparesig   0.0   1.0  -> -1
+cmsx075 comparesig   0.0   2.0  -> -1
+cmsx076 comparesig   1.0  -2.0  -> 1
+cmsx077 comparesig   1.0  -1.0  -> 1
+cmsx078 comparesig   1.0   0.0  -> 1
+cmsx079 comparesig   1.0   1.0  -> 0
+cmsx080 comparesig   1.0   2.0  -> -1
+cmsx081 comparesig   2.0  -2.0  -> 1
+cmsx082 comparesig   2.0  -1.0  -> 1
+cmsx083 comparesig   2.0   0.0  -> 1
+cmsx085 comparesig   2.0   1.0  -> 1
+cmsx086 comparesig   2.0   2.0  -> 0
+
+-- now some cases which might overflow if subtract were used
+maxexponent: 999999999
+minexponent: -999999999
+cmsx090 comparesig  9.99999999E+999999999 9.99999999E+999999999  -> 0
+cmsx091 comparesig -9.99999999E+999999999 9.99999999E+999999999  -> -1
+cmsx092 comparesig  9.99999999E+999999999 -9.99999999E+999999999 -> 1
+cmsx093 comparesig -9.99999999E+999999999 -9.99999999E+999999999 -> 0
+
+-- some differing length/exponent cases
+cmsx100 comparesig   7.0    7.0    -> 0
+cmsx101 comparesig   7.0    7      -> 0
+cmsx102 comparesig   7      7.0    -> 0
+cmsx103 comparesig   7E+0   7.0    -> 0
+cmsx104 comparesig   70E-1  7.0    -> 0
+cmsx105 comparesig   0.7E+1 7      -> 0
+cmsx106 comparesig   70E-1  7      -> 0
+cmsx107 comparesig   7.0    7E+0   -> 0
+cmsx108 comparesig   7.0    70E-1  -> 0
+cmsx109 comparesig   7      0.7E+1 -> 0
+cmsx110 comparesig   7      70E-1  -> 0
+
+cmsx120 comparesig   8.0    7.0    -> 1
+cmsx121 comparesig   8.0    7      -> 1
+cmsx122 comparesig   8      7.0    -> 1
+cmsx123 comparesig   8E+0   7.0    -> 1
+cmsx124 comparesig   80E-1  7.0    -> 1
+cmsx125 comparesig   0.8E+1 7      -> 1
+cmsx126 comparesig   80E-1  7      -> 1
+cmsx127 comparesig   8.0    7E+0   -> 1
+cmsx128 comparesig   8.0    70E-1  -> 1
+cmsx129 comparesig   8      0.7E+1  -> 1
+cmsx130 comparesig   8      70E-1  -> 1
+
+cmsx140 comparesig   8.0    9.0    -> -1
+cmsx141 comparesig   8.0    9      -> -1
+cmsx142 comparesig   8      9.0    -> -1
+cmsx143 comparesig   8E+0   9.0    -> -1
+cmsx144 comparesig   80E-1  9.0    -> -1
+cmsx145 comparesig   0.8E+1 9      -> -1
+cmsx146 comparesig   80E-1  9      -> -1
+cmsx147 comparesig   8.0    9E+0   -> -1
+cmsx148 comparesig   8.0    90E-1  -> -1
+cmsx149 comparesig   8      0.9E+1 -> -1
+cmsx150 comparesig   8      90E-1  -> -1
+
+-- and again, with sign changes -+ ..
+cmsx200 comparesig  -7.0    7.0    -> -1
+cmsx201 comparesig  -7.0    7      -> -1
+cmsx202 comparesig  -7      7.0    -> -1
+cmsx203 comparesig  -7E+0   7.0    -> -1
+cmsx204 comparesig  -70E-1  7.0    -> -1
+cmsx205 comparesig  -0.7E+1 7      -> -1
+cmsx206 comparesig  -70E-1  7      -> -1
+cmsx207 comparesig  -7.0    7E+0   -> -1
+cmsx208 comparesig  -7.0    70E-1  -> -1
+cmsx209 comparesig  -7      0.7E+1 -> -1
+cmsx210 comparesig  -7      70E-1  -> -1
+
+cmsx220 comparesig  -8.0    7.0    -> -1
+cmsx221 comparesig  -8.0    7      -> -1
+cmsx222 comparesig  -8      7.0    -> -1
+cmsx223 comparesig  -8E+0   7.0    -> -1
+cmsx224 comparesig  -80E-1  7.0    -> -1
+cmsx225 comparesig  -0.8E+1 7      -> -1
+cmsx226 comparesig  -80E-1  7      -> -1
+cmsx227 comparesig  -8.0    7E+0   -> -1
+cmsx228 comparesig  -8.0    70E-1  -> -1
+cmsx229 comparesig  -8      0.7E+1 -> -1
+cmsx230 comparesig  -8      70E-1  -> -1
+
+cmsx240 comparesig  -8.0    9.0    -> -1
+cmsx241 comparesig  -8.0    9      -> -1
+cmsx242 comparesig  -8      9.0    -> -1
+cmsx243 comparesig  -8E+0   9.0    -> -1
+cmsx244 comparesig  -80E-1  9.0    -> -1
+cmsx245 comparesig  -0.8E+1 9      -> -1
+cmsx246 comparesig  -80E-1  9      -> -1
+cmsx247 comparesig  -8.0    9E+0   -> -1
+cmsx248 comparesig  -8.0    90E-1  -> -1
+cmsx249 comparesig  -8      0.9E+1 -> -1
+cmsx250 comparesig  -8      90E-1  -> -1
+
+-- and again, with sign changes +- ..
+cmsx300 comparesig   7.0    -7.0    -> 1
+cmsx301 comparesig   7.0    -7      -> 1
+cmsx302 comparesig   7      -7.0    -> 1
+cmsx303 comparesig   7E+0   -7.0    -> 1
+cmsx304 comparesig   70E-1  -7.0    -> 1
+cmsx305 comparesig   .7E+1  -7      -> 1
+cmsx306 comparesig   70E-1  -7      -> 1
+cmsx307 comparesig   7.0    -7E+0   -> 1
+cmsx308 comparesig   7.0    -70E-1  -> 1
+cmsx309 comparesig   7      -.7E+1  -> 1
+cmsx310 comparesig   7      -70E-1  -> 1
+
+cmsx320 comparesig   8.0    -7.0    -> 1
+cmsx321 comparesig   8.0    -7      -> 1
+cmsx322 comparesig   8      -7.0    -> 1
+cmsx323 comparesig   8E+0   -7.0    -> 1
+cmsx324 comparesig   80E-1  -7.0    -> 1
+cmsx325 comparesig   .8E+1  -7      -> 1
+cmsx326 comparesig   80E-1  -7      -> 1
+cmsx327 comparesig   8.0    -7E+0   -> 1
+cmsx328 comparesig   8.0    -70E-1  -> 1
+cmsx329 comparesig   8      -.7E+1  -> 1
+cmsx330 comparesig   8      -70E-1  -> 1
+
+cmsx340 comparesig   8.0    -9.0    -> 1
+cmsx341 comparesig   8.0    -9      -> 1
+cmsx342 comparesig   8      -9.0    -> 1
+cmsx343 comparesig   8E+0   -9.0    -> 1
+cmsx344 comparesig   80E-1  -9.0    -> 1
+cmsx345 comparesig   .8E+1  -9      -> 1
+cmsx346 comparesig   80E-1  -9      -> 1
+cmsx347 comparesig   8.0    -9E+0   -> 1
+cmsx348 comparesig   8.0    -90E-1  -> 1
+cmsx349 comparesig   8      -.9E+1  -> 1
+cmsx350 comparesig   8      -90E-1  -> 1
+
+-- and again, with sign changes -- ..
+cmsx400 comparesig   -7.0    -7.0    -> 0
+cmsx401 comparesig   -7.0    -7      -> 0
+cmsx402 comparesig   -7      -7.0    -> 0
+cmsx403 comparesig   -7E+0   -7.0    -> 0
+cmsx404 comparesig   -70E-1  -7.0    -> 0
+cmsx405 comparesig   -.7E+1  -7      -> 0
+cmsx406 comparesig   -70E-1  -7      -> 0
+cmsx407 comparesig   -7.0    -7E+0   -> 0
+cmsx408 comparesig   -7.0    -70E-1  -> 0
+cmsx409 comparesig   -7      -.7E+1  -> 0
+cmsx410 comparesig   -7      -70E-1  -> 0
+
+cmsx420 comparesig   -8.0    -7.0    -> -1
+cmsx421 comparesig   -8.0    -7      -> -1
+cmsx422 comparesig   -8      -7.0    -> -1
+cmsx423 comparesig   -8E+0   -7.0    -> -1
+cmsx424 comparesig   -80E-1  -7.0    -> -1
+cmsx425 comparesig   -.8E+1  -7      -> -1
+cmsx426 comparesig   -80E-1  -7      -> -1
+cmsx427 comparesig   -8.0    -7E+0   -> -1
+cmsx428 comparesig   -8.0    -70E-1  -> -1
+cmsx429 comparesig   -8      -.7E+1  -> -1
+cmsx430 comparesig   -8      -70E-1  -> -1
+
+cmsx440 comparesig   -8.0    -9.0    -> 1
+cmsx441 comparesig   -8.0    -9      -> 1
+cmsx442 comparesig   -8      -9.0    -> 1
+cmsx443 comparesig   -8E+0   -9.0    -> 1
+cmsx444 comparesig   -80E-1  -9.0    -> 1
+cmsx445 comparesig   -.8E+1  -9      -> 1
+cmsx446 comparesig   -80E-1  -9      -> 1
+cmsx447 comparesig   -8.0    -9E+0   -> 1
+cmsx448 comparesig   -8.0    -90E-1  -> 1
+cmsx449 comparesig   -8      -.9E+1  -> 1
+cmsx450 comparesig   -8      -90E-1  -> 1
+
+
+-- testcases that subtract to lots of zeros at boundaries [pgr]
+precision: 40
+cmsx470 comparesig 123.4560000000000000E789 123.456E789 -> 0
+cmsx471 comparesig 123.456000000000000E-89 123.456E-89 -> 0
+cmsx472 comparesig 123.45600000000000E789 123.456E789 -> 0
+cmsx473 comparesig 123.4560000000000E-89 123.456E-89 -> 0
+cmsx474 comparesig 123.456000000000E789 123.456E789 -> 0
+cmsx475 comparesig 123.45600000000E-89 123.456E-89 -> 0
+cmsx476 comparesig 123.4560000000E789 123.456E789 -> 0
+cmsx477 comparesig 123.456000000E-89 123.456E-89 -> 0
+cmsx478 comparesig 123.45600000E789 123.456E789 -> 0
+cmsx479 comparesig 123.4560000E-89 123.456E-89 -> 0
+cmsx480 comparesig 123.456000E789 123.456E789 -> 0
+cmsx481 comparesig 123.45600E-89 123.456E-89 -> 0
+cmsx482 comparesig 123.4560E789 123.456E789 -> 0
+cmsx483 comparesig 123.456E-89 123.456E-89 -> 0
+cmsx484 comparesig 123.456E-89 123.4560000000000000E-89 -> 0
+cmsx485 comparesig 123.456E789 123.456000000000000E789 -> 0
+cmsx486 comparesig 123.456E-89 123.45600000000000E-89 -> 0
+cmsx487 comparesig 123.456E789 123.4560000000000E789 -> 0
+cmsx488 comparesig 123.456E-89 123.456000000000E-89 -> 0
+cmsx489 comparesig 123.456E789 123.45600000000E789 -> 0
+cmsx490 comparesig 123.456E-89 123.4560000000E-89 -> 0
+cmsx491 comparesig 123.456E789 123.456000000E789 -> 0
+cmsx492 comparesig 123.456E-89 123.45600000E-89 -> 0
+cmsx493 comparesig 123.456E789 123.4560000E789 -> 0
+cmsx494 comparesig 123.456E-89 123.456000E-89 -> 0
+cmsx495 comparesig 123.456E789 123.45600E789 -> 0
+cmsx496 comparesig 123.456E-89 123.4560E-89 -> 0
+cmsx497 comparesig 123.456E789 123.456E789 -> 0
+
+-- wide-ranging, around precision; signs equal
+precision: 9
+cmsx500 comparesig    1     1E-15    -> 1
+cmsx501 comparesig    1     1E-14    -> 1
+cmsx502 comparesig    1     1E-13    -> 1
+cmsx503 comparesig    1     1E-12    -> 1
+cmsx504 comparesig    1     1E-11    -> 1
+cmsx505 comparesig    1     1E-10    -> 1
+cmsx506 comparesig    1     1E-9     -> 1
+cmsx507 comparesig    1     1E-8     -> 1
+cmsx508 comparesig    1     1E-7     -> 1
+cmsx509 comparesig    1     1E-6     -> 1
+cmsx510 comparesig    1     1E-5     -> 1
+cmsx511 comparesig    1     1E-4     -> 1
+cmsx512 comparesig    1     1E-3     -> 1
+cmsx513 comparesig    1     1E-2     -> 1
+cmsx514 comparesig    1     1E-1     -> 1
+cmsx515 comparesig    1     1E-0     -> 0
+cmsx516 comparesig    1     1E+1     -> -1
+cmsx517 comparesig    1     1E+2     -> -1
+cmsx518 comparesig    1     1E+3     -> -1
+cmsx519 comparesig    1     1E+4     -> -1
+cmsx521 comparesig    1     1E+5     -> -1
+cmsx522 comparesig    1     1E+6     -> -1
+cmsx523 comparesig    1     1E+7     -> -1
+cmsx524 comparesig    1     1E+8     -> -1
+cmsx525 comparesig    1     1E+9     -> -1
+cmsx526 comparesig    1     1E+10    -> -1
+cmsx527 comparesig    1     1E+11    -> -1
+cmsx528 comparesig    1     1E+12    -> -1
+cmsx529 comparesig    1     1E+13    -> -1
+cmsx530 comparesig    1     1E+14    -> -1
+cmsx531 comparesig    1     1E+15    -> -1
+-- LR swap
+cmsx540 comparesig    1E-15  1       -> -1
+cmsx541 comparesig    1E-14  1       -> -1
+cmsx542 comparesig    1E-13  1       -> -1
+cmsx543 comparesig    1E-12  1       -> -1
+cmsx544 comparesig    1E-11  1       -> -1
+cmsx545 comparesig    1E-10  1       -> -1
+cmsx546 comparesig    1E-9   1       -> -1
+cmsx547 comparesig    1E-8   1       -> -1
+cmsx548 comparesig    1E-7   1       -> -1
+cmsx549 comparesig    1E-6   1       -> -1
+cmsx550 comparesig    1E-5   1       -> -1
+cmsx551 comparesig    1E-4   1       -> -1
+cmsx552 comparesig    1E-3   1       -> -1
+cmsx553 comparesig    1E-2   1       -> -1
+cmsx554 comparesig    1E-1   1       -> -1
+cmsx555 comparesig    1E-0   1       ->  0
+cmsx556 comparesig    1E+1   1       ->  1
+cmsx557 comparesig    1E+2   1       ->  1
+cmsx558 comparesig    1E+3   1       ->  1
+cmsx559 comparesig    1E+4   1       ->  1
+cmsx561 comparesig    1E+5   1       ->  1
+cmsx562 comparesig    1E+6   1       ->  1
+cmsx563 comparesig    1E+7   1       ->  1
+cmsx564 comparesig    1E+8   1       ->  1
+cmsx565 comparesig    1E+9   1       ->  1
+cmsx566 comparesig    1E+10  1       ->  1
+cmsx567 comparesig    1E+11  1       ->  1
+cmsx568 comparesig    1E+12  1       ->  1
+cmsx569 comparesig    1E+13  1       ->  1
+cmsx570 comparesig    1E+14  1       ->  1
+cmsx571 comparesig    1E+15  1       ->  1
+-- similar with a useful coefficient, one side only
+cmsx580 comparesig  0.000000987654321     1E-15    -> 1
+cmsx581 comparesig  0.000000987654321     1E-14    -> 1
+cmsx582 comparesig  0.000000987654321     1E-13    -> 1
+cmsx583 comparesig  0.000000987654321     1E-12    -> 1
+cmsx584 comparesig  0.000000987654321     1E-11    -> 1
+cmsx585 comparesig  0.000000987654321     1E-10    -> 1
+cmsx586 comparesig  0.000000987654321     1E-9     -> 1
+cmsx587 comparesig  0.000000987654321     1E-8     -> 1
+cmsx588 comparesig  0.000000987654321     1E-7     -> 1
+cmsx589 comparesig  0.000000987654321     1E-6     -> -1
+cmsx590 comparesig  0.000000987654321     1E-5     -> -1
+cmsx591 comparesig  0.000000987654321     1E-4     -> -1
+cmsx592 comparesig  0.000000987654321     1E-3     -> -1
+cmsx593 comparesig  0.000000987654321     1E-2     -> -1
+cmsx594 comparesig  0.000000987654321     1E-1     -> -1
+cmsx595 comparesig  0.000000987654321     1E-0     -> -1
+cmsx596 comparesig  0.000000987654321     1E+1     -> -1
+cmsx597 comparesig  0.000000987654321     1E+2     -> -1
+cmsx598 comparesig  0.000000987654321     1E+3     -> -1
+cmsx599 comparesig  0.000000987654321     1E+4     -> -1
+
+-- check some unit-y traps
+precision: 20
+cmsx600 comparesig   12            12.2345 -> -1
+cmsx601 comparesig   12.0          12.2345 -> -1
+cmsx602 comparesig   12.00         12.2345 -> -1
+cmsx603 comparesig   12.000        12.2345 -> -1
+cmsx604 comparesig   12.0000       12.2345 -> -1
+cmsx605 comparesig   12.00000      12.2345 -> -1
+cmsx606 comparesig   12.000000     12.2345 -> -1
+cmsx607 comparesig   12.0000000    12.2345 -> -1
+cmsx608 comparesig   12.00000000   12.2345 -> -1
+cmsx609 comparesig   12.000000000  12.2345 -> -1
+cmsx610 comparesig   12.1234 12            ->  1
+cmsx611 comparesig   12.1234 12.0          ->  1
+cmsx612 comparesig   12.1234 12.00         ->  1
+cmsx613 comparesig   12.1234 12.000        ->  1
+cmsx614 comparesig   12.1234 12.0000       ->  1
+cmsx615 comparesig   12.1234 12.00000      ->  1
+cmsx616 comparesig   12.1234 12.000000     ->  1
+cmsx617 comparesig   12.1234 12.0000000    ->  1
+cmsx618 comparesig   12.1234 12.00000000   ->  1
+cmsx619 comparesig   12.1234 12.000000000  ->  1
+cmsx620 comparesig  -12           -12.2345 ->  1
+cmsx621 comparesig  -12.0         -12.2345 ->  1
+cmsx622 comparesig  -12.00        -12.2345 ->  1
+cmsx623 comparesig  -12.000       -12.2345 ->  1
+cmsx624 comparesig  -12.0000      -12.2345 ->  1
+cmsx625 comparesig  -12.00000     -12.2345 ->  1
+cmsx626 comparesig  -12.000000    -12.2345 ->  1
+cmsx627 comparesig  -12.0000000   -12.2345 ->  1
+cmsx628 comparesig  -12.00000000  -12.2345 ->  1
+cmsx629 comparesig  -12.000000000 -12.2345 ->  1
+cmsx630 comparesig  -12.1234 -12           -> -1
+cmsx631 comparesig  -12.1234 -12.0         -> -1
+cmsx632 comparesig  -12.1234 -12.00        -> -1
+cmsx633 comparesig  -12.1234 -12.000       -> -1
+cmsx634 comparesig  -12.1234 -12.0000      -> -1
+cmsx635 comparesig  -12.1234 -12.00000     -> -1
+cmsx636 comparesig  -12.1234 -12.000000    -> -1
+cmsx637 comparesig  -12.1234 -12.0000000   -> -1
+cmsx638 comparesig  -12.1234 -12.00000000  -> -1
+cmsx639 comparesig  -12.1234 -12.000000000 -> -1
+precision: 9
+
+-- extended zeros
+cmsx640 comparesig   0     0   -> 0
+cmsx641 comparesig   0    -0   -> 0
+cmsx642 comparesig   0    -0.0 -> 0
+cmsx643 comparesig   0     0.0 -> 0
+cmsx644 comparesig  -0     0   -> 0
+cmsx645 comparesig  -0    -0   -> 0
+cmsx646 comparesig  -0    -0.0 -> 0
+cmsx647 comparesig  -0     0.0 -> 0
+cmsx648 comparesig   0.0   0   -> 0
+cmsx649 comparesig   0.0  -0   -> 0
+cmsx650 comparesig   0.0  -0.0 -> 0
+cmsx651 comparesig   0.0   0.0 -> 0
+cmsx652 comparesig  -0.0   0   -> 0
+cmsx653 comparesig  -0.0  -0   -> 0
+cmsx654 comparesig  -0.0  -0.0 -> 0
+cmsx655 comparesig  -0.0   0.0 -> 0
+
+cmsx656 comparesig  -0E1   0.0 -> 0
+cmsx657 comparesig  -0E2   0.0 -> 0
+cmsx658 comparesig   0E1   0.0 -> 0
+cmsx659 comparesig   0E2   0.0 -> 0
+cmsx660 comparesig  -0E1   0   -> 0
+cmsx661 comparesig  -0E2   0   -> 0
+cmsx662 comparesig   0E1   0   -> 0
+cmsx663 comparesig   0E2   0   -> 0
+cmsx664 comparesig  -0E1  -0E1 -> 0
+cmsx665 comparesig  -0E2  -0E1 -> 0
+cmsx666 comparesig   0E1  -0E1 -> 0
+cmsx667 comparesig   0E2  -0E1 -> 0
+cmsx668 comparesig  -0E1  -0E2 -> 0
+cmsx669 comparesig  -0E2  -0E2 -> 0
+cmsx670 comparesig   0E1  -0E2 -> 0
+cmsx671 comparesig   0E2  -0E2 -> 0
+cmsx672 comparesig  -0E1   0E1 -> 0
+cmsx673 comparesig  -0E2   0E1 -> 0
+cmsx674 comparesig   0E1   0E1 -> 0
+cmsx675 comparesig   0E2   0E1 -> 0
+cmsx676 comparesig  -0E1   0E2 -> 0
+cmsx677 comparesig  -0E2   0E2 -> 0
+cmsx678 comparesig   0E1   0E2 -> 0
+cmsx679 comparesig   0E2   0E2 -> 0
+
+-- trailing zeros; unit-y
+precision: 20
+cmsx680 comparesig   12    12           -> 0
+cmsx681 comparesig   12    12.0         -> 0
+cmsx682 comparesig   12    12.00        -> 0
+cmsx683 comparesig   12    12.000       -> 0
+cmsx684 comparesig   12    12.0000      -> 0
+cmsx685 comparesig   12    12.00000     -> 0
+cmsx686 comparesig   12    12.000000    -> 0
+cmsx687 comparesig   12    12.0000000   -> 0
+cmsx688 comparesig   12    12.00000000  -> 0
+cmsx689 comparesig   12    12.000000000 -> 0
+cmsx690 comparesig   12              12 -> 0
+cmsx691 comparesig   12.0            12 -> 0
+cmsx692 comparesig   12.00           12 -> 0
+cmsx693 comparesig   12.000          12 -> 0
+cmsx694 comparesig   12.0000         12 -> 0
+cmsx695 comparesig   12.00000        12 -> 0
+cmsx696 comparesig   12.000000       12 -> 0
+cmsx697 comparesig   12.0000000      12 -> 0
+cmsx698 comparesig   12.00000000     12 -> 0
+cmsx699 comparesig   12.000000000    12 -> 0
+
+-- long operand checks
+maxexponent: 999
+minexponent: -999
+precision: 9
+cmsx701 comparesig 12345678000  1 ->  1
+cmsx702 comparesig 1 12345678000  -> -1
+cmsx703 comparesig 1234567800   1 ->  1
+cmsx704 comparesig 1 1234567800   -> -1
+cmsx705 comparesig 1234567890   1 ->  1
+cmsx706 comparesig 1 1234567890   -> -1
+cmsx707 comparesig 1234567891   1 ->  1
+cmsx708 comparesig 1 1234567891   -> -1
+cmsx709 comparesig 12345678901  1 ->  1
+cmsx710 comparesig 1 12345678901  -> -1
+cmsx711 comparesig 1234567896   1 ->  1
+cmsx712 comparesig 1 1234567896   -> -1
+cmsx713 comparesig -1234567891  1 -> -1
+cmsx714 comparesig 1 -1234567891  ->  1
+cmsx715 comparesig -12345678901 1 -> -1
+cmsx716 comparesig 1 -12345678901 ->  1
+cmsx717 comparesig -1234567896  1 -> -1
+cmsx718 comparesig 1 -1234567896  ->  1
+
+precision: 15
+-- same with plenty of precision
+cmsx721 comparesig 12345678000 1 -> 1
+cmsx722 comparesig 1 12345678000 -> -1
+cmsx723 comparesig 1234567800  1 -> 1
+cmsx724 comparesig 1 1234567800  -> -1
+cmsx725 comparesig 1234567890  1 -> 1
+cmsx726 comparesig 1 1234567890  -> -1
+cmsx727 comparesig 1234567891  1 -> 1
+cmsx728 comparesig 1 1234567891  -> -1
+cmsx729 comparesig 12345678901 1 -> 1
+cmsx730 comparesig 1 12345678901 -> -1
+cmsx731 comparesig 1234567896  1 -> 1
+cmsx732 comparesig 1 1234567896  -> -1
+
+-- residue cases
+precision: 5
+cmsx740 comparesig  1  0.9999999  -> 1
+cmsx741 comparesig  1  0.999999   -> 1
+cmsx742 comparesig  1  0.99999    -> 1
+cmsx743 comparesig  1  1.0000     -> 0
+cmsx744 comparesig  1  1.00001    -> -1
+cmsx745 comparesig  1  1.000001   -> -1
+cmsx746 comparesig  1  1.0000001  -> -1
+cmsx750 comparesig  0.9999999  1  -> -1
+cmsx751 comparesig  0.999999   1  -> -1
+cmsx752 comparesig  0.99999    1  -> -1
+cmsx753 comparesig  1.0000     1  -> 0
+cmsx754 comparesig  1.00001    1  -> 1
+cmsx755 comparesig  1.000001   1  -> 1
+cmsx756 comparesig  1.0000001  1  -> 1
+
+-- a selection of longies
+cmsx760 comparesig -36852134.84194296250843579428931 -5830629.8347085025808756560357940 -> -1
+cmsx761 comparesig -36852134.84194296250843579428931 -36852134.84194296250843579428931  -> 0
+cmsx762 comparesig -36852134.94194296250843579428931 -36852134.84194296250843579428931  -> -1
+cmsx763 comparesig -36852134.84194296250843579428931 -36852134.94194296250843579428931  -> 1
+-- precisions above or below the difference should have no effect
+precision:   11
+cmsx764 comparesig -36852134.84194296250843579428931 -36852134.94194296250843579428931  -> 1
+precision:   10
+cmsx765 comparesig -36852134.84194296250843579428931 -36852134.94194296250843579428931  -> 1
+precision:    9
+cmsx766 comparesig -36852134.84194296250843579428931 -36852134.94194296250843579428931  -> 1
+precision:    8
+cmsx767 comparesig -36852134.84194296250843579428931 -36852134.94194296250843579428931  -> 1
+precision:    7
+cmsx768 comparesig -36852134.84194296250843579428931 -36852134.94194296250843579428931  -> 1
+precision:    6
+cmsx769 comparesig -36852134.84194296250843579428931 -36852134.94194296250843579428931  -> 1
+precision:    5
+cmsx770 comparesig -36852134.84194296250843579428931 -36852134.94194296250843579428931  -> 1
+precision:    4
+cmsx771 comparesig -36852134.84194296250843579428931 -36852134.94194296250843579428931  -> 1
+precision:    3
+cmsx772 comparesig -36852134.84194296250843579428931 -36852134.94194296250843579428931  -> 1
+precision:    2
+cmsx773 comparesig -36852134.84194296250843579428931 -36852134.94194296250843579428931  -> 1
+precision:    1
+cmsx774 comparesig -36852134.84194296250843579428931 -36852134.94194296250843579428931  -> 1
+
+-- Specials
+precision:   9
+cmsx780 comparesig  Inf  -Inf   ->  1
+cmsx781 comparesig  Inf  -1000  ->  1
+cmsx782 comparesig  Inf  -1     ->  1
+cmsx783 comparesig  Inf  -0     ->  1
+cmsx784 comparesig  Inf   0     ->  1
+cmsx785 comparesig  Inf   1     ->  1
+cmsx786 comparesig  Inf   1000  ->  1
+cmsx787 comparesig  Inf   Inf   ->  0
+cmsx788 comparesig -1000  Inf   -> -1
+cmsx789 comparesig -Inf   Inf   -> -1
+cmsx790 comparesig -1     Inf   -> -1
+cmsx791 comparesig -0     Inf   -> -1
+cmsx792 comparesig  0     Inf   -> -1
+cmsx793 comparesig  1     Inf   -> -1
+cmsx794 comparesig  1000  Inf   -> -1
+cmsx795 comparesig  Inf   Inf   ->  0
+
+cmsx800 comparesig -Inf  -Inf   ->  0
+cmsx801 comparesig -Inf  -1000  -> -1
+cmsx802 comparesig -Inf  -1     -> -1
+cmsx803 comparesig -Inf  -0     -> -1
+cmsx804 comparesig -Inf   0     -> -1
+cmsx805 comparesig -Inf   1     -> -1
+cmsx806 comparesig -Inf   1000  -> -1
+cmsx807 comparesig -Inf   Inf   -> -1
+cmsx808 comparesig -Inf  -Inf   ->  0
+cmsx809 comparesig -1000 -Inf   ->  1
+cmsx810 comparesig -1    -Inf   ->  1
+cmsx811 comparesig -0    -Inf   ->  1
+cmsx812 comparesig  0    -Inf   ->  1
+cmsx813 comparesig  1    -Inf   ->  1
+cmsx814 comparesig  1000 -Inf   ->  1
+cmsx815 comparesig  Inf  -Inf   ->  1
+
+cmsx821 comparesig  NaN -Inf    ->  NaN  Invalid_operation
+cmsx822 comparesig  NaN -1000   ->  NaN  Invalid_operation
+cmsx823 comparesig  NaN -1      ->  NaN  Invalid_operation
+cmsx824 comparesig  NaN -0      ->  NaN  Invalid_operation
+cmsx825 comparesig  NaN  0      ->  NaN  Invalid_operation
+cmsx826 comparesig  NaN  1      ->  NaN  Invalid_operation
+cmsx827 comparesig  NaN  1000   ->  NaN  Invalid_operation
+cmsx828 comparesig  NaN  Inf    ->  NaN  Invalid_operation
+cmsx829 comparesig  NaN  NaN    ->  NaN  Invalid_operation
+cmsx830 comparesig -Inf  NaN    ->  NaN  Invalid_operation
+cmsx831 comparesig -1000 NaN    ->  NaN  Invalid_operation
+cmsx832 comparesig -1    NaN    ->  NaN  Invalid_operation
+cmsx833 comparesig -0    NaN    ->  NaN  Invalid_operation
+cmsx834 comparesig  0    NaN    ->  NaN  Invalid_operation
+cmsx835 comparesig  1    NaN    ->  NaN  Invalid_operation
+cmsx836 comparesig  1000 NaN    ->  NaN  Invalid_operation
+cmsx837 comparesig  Inf  NaN    ->  NaN  Invalid_operation
+cmsx838 comparesig -NaN -NaN    -> -NaN  Invalid_operation
+cmsx839 comparesig +NaN -NaN    ->  NaN  Invalid_operation
+cmsx840 comparesig -NaN +NaN    -> -NaN  Invalid_operation
+
+cmsx841 comparesig  sNaN -Inf   ->  NaN  Invalid_operation
+cmsx842 comparesig  sNaN -1000  ->  NaN  Invalid_operation
+cmsx843 comparesig  sNaN -1     ->  NaN  Invalid_operation
+cmsx844 comparesig  sNaN -0     ->  NaN  Invalid_operation
+cmsx845 comparesig  sNaN  0     ->  NaN  Invalid_operation
+cmsx846 comparesig  sNaN  1     ->  NaN  Invalid_operation
+cmsx847 comparesig  sNaN  1000  ->  NaN  Invalid_operation
+cmsx848 comparesig  sNaN  NaN   ->  NaN  Invalid_operation
+cmsx849 comparesig  sNaN sNaN   ->  NaN  Invalid_operation
+cmsx850 comparesig  NaN  sNaN   ->  NaN  Invalid_operation
+cmsx851 comparesig -Inf  sNaN   ->  NaN  Invalid_operation
+cmsx852 comparesig -1000 sNaN   ->  NaN  Invalid_operation
+cmsx853 comparesig -1    sNaN   ->  NaN  Invalid_operation
+cmsx854 comparesig -0    sNaN   ->  NaN  Invalid_operation
+cmsx855 comparesig  0    sNaN   ->  NaN  Invalid_operation
+cmsx856 comparesig  1    sNaN   ->  NaN  Invalid_operation
+cmsx857 comparesig  1000 sNaN   ->  NaN  Invalid_operation
+cmsx858 comparesig  Inf  sNaN   ->  NaN  Invalid_operation
+cmsx859 comparesig  NaN  sNaN   ->  NaN  Invalid_operation
+
+-- propagating NaNs
+cmsx860 comparesig  NaN9 -Inf   ->  NaN9   Invalid_operation
+cmsx861 comparesig  NaN8  999   ->  NaN8   Invalid_operation
+cmsx862 comparesig  NaN77 Inf   ->  NaN77  Invalid_operation
+cmsx863 comparesig -NaN67 NaN5  -> -NaN67  Invalid_operation
+cmsx864 comparesig -Inf  -NaN4  -> -NaN4   Invalid_operation
+cmsx865 comparesig -999  -NaN33 -> -NaN33  Invalid_operation
+cmsx866 comparesig  Inf   NaN2  ->  NaN2   Invalid_operation
+cmsx867 comparesig -NaN41 -NaN42 -> -NaN41 Invalid_operation
+cmsx868 comparesig +NaN41 -NaN42 ->  NaN41 Invalid_operation
+cmsx869 comparesig -NaN41 +NaN42 -> -NaN41 Invalid_operation
+cmsx870 comparesig +NaN41 +NaN42 ->  NaN41 Invalid_operation
+
+cmsx871 comparesig -sNaN99 -Inf    -> -NaN99 Invalid_operation
+cmsx872 comparesig  sNaN98 -11     ->  NaN98 Invalid_operation
+cmsx873 comparesig  sNaN97  NaN    ->  NaN97 Invalid_operation
+cmsx874 comparesig  sNaN16 sNaN94  ->  NaN16 Invalid_operation
+cmsx875 comparesig  NaN85  sNaN83  ->  NaN83 Invalid_operation
+cmsx876 comparesig -Inf    sNaN92  ->  NaN92 Invalid_operation
+cmsx877 comparesig  088    sNaN81  ->  NaN81 Invalid_operation
+cmsx878 comparesig  Inf    sNaN90  ->  NaN90 Invalid_operation
+cmsx879 comparesig  NaN   -sNaN89  -> -NaN89 Invalid_operation
+
+-- overflow and underflow tests .. subnormal results now allowed
+maxExponent: 999999999
+minexponent: -999999999
+cmsx880 comparesig +1.23456789012345E-0 9E+999999999 -> -1
+cmsx881 comparesig 9E+999999999 +1.23456789012345E-0 ->  1
+cmsx882 comparesig +0.100 9E-999999999               ->  1
+cmsx883 comparesig 9E-999999999 +0.100               -> -1
+cmsx885 comparesig -1.23456789012345E-0 9E+999999999 -> -1
+cmsx886 comparesig 9E+999999999 -1.23456789012345E-0 ->  1
+cmsx887 comparesig -0.100 9E-999999999               -> -1
+cmsx888 comparesig 9E-999999999 -0.100               ->  1
+
+cmsx889 comparesig 1e-599999999 1e-400000001   -> -1
+cmsx890 comparesig 1e-599999999 1e-400000000   -> -1
+cmsx891 comparesig 1e-600000000 1e-400000000   -> -1
+cmsx892 comparesig 9e-999999998 0.01           -> -1
+cmsx893 comparesig 9e-999999998 0.1            -> -1
+cmsx894 comparesig 0.01 9e-999999998           ->  1
+cmsx895 comparesig 1e599999999 1e400000001     ->  1
+cmsx896 comparesig 1e599999999 1e400000000     ->  1
+cmsx897 comparesig 1e600000000 1e400000000     ->  1
+cmsx898 comparesig 9e999999998 100             ->  1
+cmsx899 comparesig 9e999999998 10              ->  1
+cmsx900 comparesig 100  9e999999998            -> -1
+-- signs
+cmsx901 comparesig  1e+777777777  1e+411111111 ->  1
+cmsx902 comparesig  1e+777777777 -1e+411111111 ->  1
+cmsx903 comparesig -1e+777777777  1e+411111111 -> -1
+cmsx904 comparesig -1e+777777777 -1e+411111111 -> -1
+cmsx905 comparesig  1e-777777777  1e-411111111 -> -1
+cmsx906 comparesig  1e-777777777 -1e-411111111 ->  1
+cmsx907 comparesig -1e-777777777  1e-411111111 -> -1
+cmsx908 comparesig -1e-777777777 -1e-411111111 ->  1
+
+-- spread zeros
+comx910 comparesig   0E-383  0       ->  0
+cmsx911 comparesig   0E-383 -0       ->  0
+cmsx912 comparesig  -0E-383  0       ->  0
+cmsx913 comparesig  -0E-383 -0       ->  0
+cmsx914 comparesig   0E-383  0E+384  ->  0
+cmsx915 comparesig   0E-383 -0E+384  ->  0
+cmsx916 comparesig  -0E-383  0E+384  ->  0
+cmsx917 comparesig  -0E-383 -0E+384  ->  0
+cmsx918 comparesig   0       0E+384  ->  0
+cmsx919 comparesig   0      -0E+384  ->  0
+cmsx920 comparesig  -0       0E+384  ->  0
+cmsx921 comparesig  -0      -0E+384  ->  0
+cmsx930 comparesig   0E+384  0       ->  0
+cmsx931 comparesig   0E+384 -0       ->  0
+cmsx932 comparesig  -0E+384  0       ->  0
+cmsx933 comparesig  -0E+384 -0       ->  0
+cmsx934 comparesig   0E+384  0E-383  ->  0
+cmsx935 comparesig   0E+384 -0E-383  ->  0
+cmsx936 comparesig  -0E+384  0E-383  ->  0
+cmsx937 comparesig  -0E+384 -0E-383  ->  0
+cmsx938 comparesig   0       0E-383  ->  0
+cmsx939 comparesig   0      -0E-383  ->  0
+cmsx940 comparesig  -0       0E-383  ->  0
+cmsx941 comparesig  -0      -0E-383  ->  0
+
+-- Null tests
+cmsx990 comparesig 10  # -> NaN Invalid_operation
+cmsx991 comparesig  # 10 -> NaN Invalid_operation

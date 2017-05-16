@@ -1,0 +1,47 @@
+#!/usr/bin/env ruby
+
+require 'pathname'
+
+SYNTAX_ERROR_EXPECTED = %w(183356.rb 187305-1.rb 187305-2.rb 187305-3.rb 190132.rb)
+
+def expected_result?(file)
+  return true if $?.success?
+  return true if SYNTAX_ERROR_EXPECTED.include?(file) && $?.exitstatus == 1
+  false
+end
+
+pwd = Pathname.new(__FILE__).dirname
+mruby = pwd.join('../ext/enterprise_script_service/mruby/bin/mruby').to_s
+testdir = pwd.join('../tests/regression')
+
+failures = false
+
+Dir.entries(testdir).each do |file|
+  filepath = testdir.join(file)
+  if File.file?(filepath)
+    cmd = "#{mruby} #{filepath}"
+    system(cmd)
+
+    if expected_result?(file)
+      puts "#{file}: all good."
+    else
+      failures = true
+
+      if $?.stopped?
+        puts "#{file}: Stopped (#{$?.stopsig})"
+      elsif $?.signaled?
+        puts "#{file}: Signaled (#{$?.termsig})"
+      elsif $?.exited?
+        puts "#{file}: Exited (#{$?.exitstatus})"
+      else
+        puts "#{file}: unknown term signal: #{$?.methods} (#{$?})"
+      end
+    end
+  end
+end
+
+if failures
+  raise "Regression tests failed"
+else
+  puts "Regression tests succeeded"
+end

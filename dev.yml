@@ -1,0 +1,26 @@
+name: enterprise-script-service
+
+up:
+  - xcode_clt
+  - ruby:
+      package: shopify/shopify/shopify-ruby
+      version: 2.2.3p172-shopify
+  - bundler
+  - submodules
+
+commands:
+  recompile:
+    syntax: ""
+    desc: "Compiles native extention"
+    run: bin/rake clobber compile
+  compile:
+    syntax: ""
+    desc: "Compiles native extention"
+    run: bin/rake compile
+  spec:
+    syntax: ""
+    desc: "Run specs"
+    run: bin/rake spec
+
+packages:
+  - git@github.com:Shopify/dev-shopify.git
