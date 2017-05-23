@@ -8,7 +8,7 @@
 #include <iostream>
 #include <unistd.h>
 
-static const std::size_t MEMORY_QUOTA = 4 * MiB;
+static const std::size_t MEMORY_QUOTA = 8 * MiB;
 
 static me_mruby_engine *init_engine(const timer &t, me_memory_pool *allocator, const std::uint64_t instruction_quota);
 static me_memory_pool *init_mem_pool(const timer &t);
