@@ -11,7 +11,7 @@ RSpec.describe(EnterpriseScriptService::ServiceProcess) do
   end
 
   let(:service_process) do
-    EnterpriseScriptService::ServiceProcess.new(service_path, spawner, 100000, 2)
+    EnterpriseScriptService::ServiceProcess.new(service_path, spawner, 100000, 2, 4 << 20)
   end
 
   it "creates a channel to communicate with the subprocess" do
@@ -39,7 +39,7 @@ RSpec.describe(EnterpriseScriptService::ServiceProcess) do
 
   it "open passes arguments to process" do
     expect(spawner)
-      .to receive(:spawn).once.with(instance_of(String), "-i", 100000.to_s, "-C", 2.to_s, instance_of(Hash))
+      .to receive(:spawn).once.with(instance_of(String), "-i", 100000.to_s, "-C", 2.to_s, "-m", (4 << 20).to_s, instance_of(Hash))
     service_process.open do |c|
     end
   end
