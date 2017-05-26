@@ -1,12 +1,13 @@
 module EnterpriseScriptService
   class ServiceProcess
-    attr_reader(:path, :spawner, :instruction_quota, :instruction_quota_start)
+    attr_reader(:path, :spawner, :instruction_quota, :instruction_quota_start, :memory_quota)
 
-    def initialize(path, spawner, instruction_quota, instruction_quota_start)
+    def initialize(path, spawner, instruction_quota, instruction_quota_start, memory_quota)
       @path = path
       @spawner = spawner
       @instruction_quota = instruction_quota
       @instruction_quota_start = instruction_quota_start
+      @memory_quota = memory_quota
     end
 
     def open
@@ -16,7 +17,8 @@ module EnterpriseScriptService
       pid = spawner.spawn(
         path,
         "-i", instruction_quota.to_s,
-        "-C",  instruction_quota_start.to_s,
+        "-C", instruction_quota_start.to_s,
+        "-m", memory_quota.to_s,
         in: in_reader,
         out: out_writer,
         unsetenv_others: true,

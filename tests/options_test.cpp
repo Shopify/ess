@@ -154,19 +154,46 @@ TEST(options_test, returns_configured_quota_start_maxed) {
   EXPECT_EQ(UINT32_MAX, opts.instruction_quota_start());
 }
 
+TEST(options_test, returns_configured_memory_quota) {
+  uint32_t configured_start = rand() % UINT32_MAX;
+
+  char arg_value[100];
+  snprintf(arg_value, 100, "-m %u", configured_start);
+
+  int argc = 2;
+  char *argv[] = { (char*) "options_test", arg_value };
+
+  std::ostringstream os;
+
+  options opts;
+  opts.read_from(argc, argv, os);
+
+  EXPECT_TRUE(os.str().empty());
+  EXPECT_EQ(configured_start, opts.memory_quota());
+}
+
+TEST(options_test, returns_default_memory_quota) {
+
+  options opts;
+  EXPECT_EQ(size_t{8 << 20}, opts.memory_quota());
+}
+
 TEST(options_test, parses_all_options) {
 
   char *opt1 = (char *) "-C";
   char *val1 = (char *) "42";
   char *opt2 = (char *) "-i";
   char *val2 = (char *) "100200";
+  char *opt3 = (char *) "-m";
+  char *val3 = (char *) "1048576";
 
-  int argc = 5;
-  char *argv[] = { (char *) "options_test", opt1, val1, opt2, val2 };
+  int argc = 7;
+  char *argv[] = { (char *) "options_test", opt1, val1, opt2, val2, opt3, val3 };
 
   options opts;
   opts.read_from(argc, argv);
 
   EXPECT_EQ(uint32_t{42}, opts.instruction_quota_start());
   EXPECT_EQ(uint64_t{100200}, opts.instruction_quota());
+  EXPECT_EQ(size_t{1048576}, opts.memory_quota());
 }

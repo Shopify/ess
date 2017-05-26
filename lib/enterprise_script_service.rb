@@ -14,7 +14,7 @@ require("enterprise_script_service/stat")
 
 module EnterpriseScriptService
   class << self
-    def run(input:, sources:, instructions: nil, timeout: 1, instruction_quota: 100000, instruction_quota_start: 0)
+    def run(input:, sources:, instructions: nil, timeout: 1, instruction_quota: 100000, instruction_quota_start: 0, memory_quota: 8 << 20)
       packer = EnterpriseScriptService::Protocol.packer_factory.packer
 
       payload = {input: input, sources: sources}
@@ -30,6 +30,7 @@ module EnterpriseScriptService
         spawner,
         instruction_quota,
         instruction_quota_start,
+        memory_quota,
       )
       runner = EnterpriseScriptService::Runner.new(
         timeout: timeout,

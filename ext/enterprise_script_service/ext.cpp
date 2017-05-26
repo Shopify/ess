@@ -8,10 +8,8 @@
 #include <iostream>
 #include <unistd.h>
 
-static const std::size_t MEMORY_QUOTA = 8 * MiB;
-
 static me_mruby_engine *init_engine(const timer &t, me_memory_pool *allocator, const std::uint64_t instruction_quota);
-static me_memory_pool *init_mem_pool(const timer &t);
+static me_memory_pool *init_mem_pool(const timer &t, size_t capacity);
 static void read_data(script_data &script, const timer &t);
 static void sandbox(const timer &t);
 
@@ -31,9 +29,10 @@ int main(int argc, char *argv[]) {
 
     read_data(*script, t);
 
-    me_memory_pool *allocator = init_mem_pool(t);
     options opts;
     opts.read_from(argc, argv);
+
+    me_memory_pool *allocator = init_mem_pool(t, opts.memory_quota());
     me_mruby_engine *engine = init_engine(t, allocator, opts.instruction_quota());
 
     sandbox(t);
@@ -60,11 +59,11 @@ void read_data(script_data &script, const timer &t) {
     script.read_from(STDIN_FILENO);
 }
 
-me_memory_pool *init_mem_pool(const timer &t) {
+me_memory_pool *init_mem_pool(const timer &t, size_t capacity) {
   me_memory_pool *allocator;
   {
     auto timing = t.measure("mem");
-    allocator = me_memory_pool_new(MEMORY_QUOTA);
+    allocator = me_memory_pool_new(capacity);
   }
   return allocator;
 }
