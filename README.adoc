@@ -38,6 +38,10 @@ To rebuild the entire project (which is useful when switching from one OS to ano
 
 == Using it
 
+The sample script `bin/sandbox` reads Ruby input from a file or stdin, executes it, and displays the results.
+
+You can invoke ESS from your own Ruby code as follows:
+
 [source, ruby]
 ----
 result = EnterpriseScriptService.run(
