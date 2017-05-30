@@ -1,30 +1,30 @@
 = enterprise-script-service
 
-Then enterprise script service (aka ESS) is a thin ruby API layer that spawns a process, the `enterprise_script_engine`, to execute some random ruby script. 
+The enterprise script service (aka ESS) is a thin Ruby API layer that spawns a process, the `enterprise_script_engine`, to execute an untrusted Ruby script.
 
-The `enterprise_script_engine` executable, ingests the input from `stdin` as a msgpack encoded payload; then spawns a mruby-engine; uses seccomp to sandbox itself; feeds `library`, `input` and finally the ruby scripts into the engine; and finally returns the output as a msgpack encoded payload to `stdout` and finally exits...
+The `enterprise_script_engine` executable ingests the input from `stdin` as a msgpack encoded payload; then spawns an mruby-engine; uses seccomp to sandbox itself; feeds `library`, `input` and finally the Ruby scripts into the engine; returns the output as a msgpack encoded payload to `stdout` and finally exits.
 
 == Data format
 
 === Input
 
 The input is expected to be a msgpack `MAP` with three keys (Symbol): `library`, `sources`, `input`:
- 
- - `library`: a msgpack `BIN` set of mruby instructions that will be fed directly to the `mruby-engine`
+
+ - `library`: a msgpack `BIN` set of MRuby instructions that will be fed directly to the `mruby-engine`
  - `input`: a msgpack formated payload for the `sources` to digest
  - `sources`: a msgpack `ARRAY` of `ARRAY` with two elements each (tuples): `path`, `source`; the actual code to be executed by the mruby-engine
- 
+
 === Output
 
-The output is msgpack encoded as well, it is streamed to the consuming end though. Streamed items can be of different types.
+The output is msgpack encoded as well; it is streamed to the consuming end though. Streamed items can be of different types.
 Each element streamed is in the format of an `ARRAY` of two elements, where the first is a `Symbol` describing the element type:
 
- * `measurement`: a msgpack `ARRAY` of two elements: `Symbol` describing the measurement and a `INT64` with the value in µs.
- * `output`: a msgpack `MAP` with two entries (key are symbols): 
- ** `extracted` with whatever the script put in `@output`, msgpack encoded; and 
- ** `stdout` with a `STRING` with whatever the script printed to "stdout".
- * `stat`: with a `MAP` keyed with symbols to their `INT64` values
- 
+ * `measurement`: a msgpack `ARRAY` of two elements: a `Symbol` describing the measurement, and an `INT64` with the value in µs.
+ * `output`: a msgpack `MAP` with two entries (keys are symbols):
+ ** `extracted` with whatever the script put in `@output`, msgpack encoded; and
+ ** `stdout` with a `STRING` containing whatever the script printed to "stdout".
+ * `stat`: a `MAP` keyed with symbols mapping to their `INT64` values
+
 == Errors
 
 When the ESS fails to serve a request, it communicates the error back to the caller by returning a non-zero status code.
@@ -32,13 +32,9 @@ It can also report data about the error, in certain cases, over the pipe. In doe
 
 == Build
 
-[source]
-----
-$> ./bin/rake mrproper <1>
-$> ./bin/rake <2>
-----
-<1> Cleans the whole build, useful when switching from one OS to another, so libs get properly rebuild
-<2> Effectively runs targer `spec` which will build all libs, the ESS and native tests; then runs all tests (native and ruby)
+Run `./bin/rake` to build the project. This effectively runs the `spec` target, which builds all libraries, the ESS and native tests; then runs all tests (native and Ruby).
+
+To rebuild the entire project (which is useful when switching from one OS to another), use `./bin/rake mrproper`.
 
 == Using it
 
@@ -51,7 +47,7 @@ result = EnterpriseScriptService.run(
     ["foo", "@output = @input[:result]"], # <2>
   ],
   instructions: nil, # <3>
-  timeout: 1000, # <4>
+  timeout: 10.0, # <4>
   instruction_quota: 100000, # <5>
   instruction_quota_start: 1, # <6>
   memory_quota: 8 << 20  # <7>
@@ -61,37 +57,34 @@ expect(result.output).to eq([26803196617, 0.475])
 expect(result.stdout).to eq("hello")
 ----
 <1> invokes the ESS, with a map as the `input` (available as `@input` in the sources)
-<2> two "scripts" to be executed, one sets the `@stdout_buffer` to a value, the second puts the value associated to the key `:result` of the map used passed in in <1>
-<3> some raw instruction set that you'd want to feed directly into mruby, defaults to nil
-<4> a 1000 second time quota to spawn, init, inject, eval and finally output the result back, defaults to 1 second
-<5> a 100k instruction limit that that the engine will execute, defaults to 100k
-<6> start counting the instructions as of index `1` in the `sources` array
-<7> ESS will create a 8 megabytes memory pool to run your script
+<2> two "scripts" to be executed, one sets the `@stdout_buffer` to a value, the second returns the value associated with the key `:result` of the map passed in in <1>
+<3> some raw instructions that will be fed directly into MRuby; defaults to nil
+<4> a 10 second time quota to spawn, init, inject, eval and finally output the result back; defaults to 1 second
+<5> a 100k instruction limit that that the engine will execute; defaults to 100k
+<6> starts counting the instructions at index 1 of the `sources` array
+<7> creates an 8 megabyte memory pool in which the script will run
 
 == Where are things?
 
 === C++ sources
 
 Consists of our code base, plus `seccomp` and `msgpack` libraries, as well as the `mruby` stuff. All in `ext/enterprise_script_service`
- 
- NOTE: lib `seccomp` is omited on Darwin
- 
-==== Tests
 
-Use googletest and are in `tests/`, which also includes the Google Test library
+Note: lib `seccomp` is omitted on Darwin.
 
 === Ruby layer
 
-Is in `lib\`;
+Ruby code is in `lib/`
 
 ==== Tests
 
-Are all in `spec/`
+- googletest tests are in `tests/`, which also includes the Google Test library.
+- RSpec tests are in `spec/`
 
 == Other useful things
 
- - There is a `CMakeLists.txt` that's mainly there for CLion support, we don't use cmake to build any of this;
- - You can use vagrant to bootstrap a VM to test under Linux while on Darwin; useful for `seccomp`
+ - There is a `CMakeLists.txt` that's mainly there for CLion support; we don't use cmake to build any of this.
+ - You can use vagrant to bootstrap a VM to test under Linux while on Darwin; this is useful when testing `seccomp`.
 
 === Vagrant
 
@@ -100,7 +93,8 @@ Are all in `spec/`
 $ vagrant up
 $ vagrant ssh
 ubuntu@ubuntu-xenial:~$ cd /vagrant
-ubuntu@ubuntu-xenial:/vagrant$ ./bin/rake mrproper spec
+ubuntu@ubuntu-xenial:/vagrant$ bundle install
+ubuntu@ubuntu-xenial:/vagrant$ git submodule init
+ubuntu@ubuntu-xenial:/vagrant$ git submodule update
+ubuntu@ubuntu-xenial:/vagrant$ ./bin/rake
 ----
-
-
