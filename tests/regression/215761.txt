@@ -1,0 +1,7 @@
+c|as{} rescue
+  Struct.new.s 9 < def to_str
+   Struct.new ""[0,
+ 3]+�=ensuF =-> {} ensure
+$�=Structop
+  end
+prpr

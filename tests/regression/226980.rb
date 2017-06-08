@@ -1,0 +1,2 @@
+puts RUBY_VERSION
+puts RUBY_VERSION..''
