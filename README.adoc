@@ -96,9 +96,9 @@ Ruby code is in `lib/`
 ----
 $ vagrant up
 $ vagrant ssh
-ubuntu@ubuntu-xenial:~$ cd /vagrant
-ubuntu@ubuntu-xenial:/vagrant$ bundle install
-ubuntu@ubuntu-xenial:/vagrant$ git submodule init
-ubuntu@ubuntu-xenial:/vagrant$ git submodule update
-ubuntu@ubuntu-xenial:/vagrant$ ./bin/rake
+vagrant@vagrant-ubuntu-trusty-64:~$ cd /vagrant
+vagrant@vagrant-ubuntu-trusty-64:/vagrant$ bundle install
+vagrant@vagrant-ubuntu-trusty-64:/vagrant$ git submodule init
+vagrant@vagrant-ubuntu-trusty-64:/vagrant$ git submodule update
+vagrant@vagrant-ubuntu-trusty-64:/vagrant$ bin/rake
 ----
