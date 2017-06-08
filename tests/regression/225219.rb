@@ -1,0 +1,10 @@
+begin
+    begin 
+    ensure 
+        d=0
+    end 
+ensure 
+    begin 
+        d%0 
+    end
+end

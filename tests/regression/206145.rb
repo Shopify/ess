@@ -1,0 +1,7 @@
+$b=String.new("A"*10)
+$b.setbyte(0,0x41) 
+$b.setbyte(1,0x41)
+$b.setbyte(2,0x41)
+$b.setbyte(3,0x41)
+$b.setbyte(4,0)
+$b.kind_of?($b)

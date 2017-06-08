@@ -1,0 +1,17 @@
+
+
+
+a
+
+""
+
+
+begin
+  [0].each do
+    [].each "", ""
+    b { "" }
+  end
+rescue=>e
+end
+GC.start
+e.backtrace

@@ -1,0 +1,319 @@
+t''
+d
+
+e def w
+end
+
+
+
+loop{(l(""))}
+
+((i))
+k
+break
+p0
+l
+d
+(n)
+class<<self;self end
+l
+(().y)
+(y)
+(y)
+(c{||})
+(c{||})
+(c{||})
+({}.y)
+l(0,c{||})
+(c{||})
+(c{||})
+(p{}.a)
+(c{()[]})
+(c{()[]})
+(c{||})
+
+l({})
+(lambda{||}.a)
+l()
+(a{||})
+(lambda{}.y)
+(l{})
+(a{})
+l(lambda{}.arity)
+l(lambda{}.arity)
+l(lambda{}.arity)
+l(lambda{}.arity)
+l(lambda{}.arity)
+l(lambda{}.arity)
+l(lambda{|(y)|}.arity)
+l(lambda{}.arity)
+
+y{}
+y{}
+y{}
+y{}
+y{}
+y{}
+y{}
+y{}
+
+def m()end
+
+l(l,"")
+
+l({},proc{},"")
+
+lambda{lambda{}}.()
+b=lambda{}
+(a"")
+
+def t()end
+
+def f()end
+
+""
+
+b.e
+d []
+b.e
+
+def o
+(l"")
+t({},"")
+("")end
+
+def t u=''.("#{}")
+(m"#{}")
+("#{}")end
+
+def s u=''
+l([],{},"#{}","#{}")end
+
+0�
+(b.curry[][])
+(b.curry(5))
+l(b.curry[])
+
+(b.curry(5))
+(b.curry)
+
+(b.curry[][])
+e{}
+(A)
+e(ArgumentError){}
+
+l(b.curry[])
+l(b.curry[])
+(b.curry(5))
+(b.curry(5))
+e(ArgumentError){}
+
+def s()end
+
+def s b={}.()
+end
+
+(f0)
+l(f0,'')
+(a)
+(().a)
+(().a)
+lambda{}
+(r)
+l(t0,'')
+(Proc.a)
+
+def s
+[]end
+
+def s
+('')end
+
+d
+s0(ArgumentError){}
+
+def e b=c{""}
+("".(""))
+l("",(""))end
+
+def g
+{}.([],(""),(""))
+l([],(""))end
+
+def n0()end
+
+l
+j
+
+l
+
+def t()end
+
+def g()end
+
+([])
+
+
+def t
+l [],00end
+
+def t
+end
+
+f0
+pr=proc{|*|[]}
+l [[]],pr.call
+0.()
+
+l
+
+l([])
+l([])
+
+l []
+l [],pr.([])
+l [],p
+
+l [],pr.([])
+l [],pr.([])
+l [],pr.([])
+l [],pr.([])
+l([])
+l [],pr.([])
+
+
+l [:c,[]],pr.([])
+l [[]],pr.call([])
+l [[]],pr.([])
+l [[]],pr.([])
+l [[]]
+l [[]],pr.([])
+
+l [:c,[]],pr.([])
+l [[]],pr.([])
+l [[]],pr.([])
+l [[]],pr.call([])
+
+l [[]],pr.()
+l [[]],pr.()
+l [[]],pr.()
+
+l [[]],pr.([])
+l [:c,[]],pr.([])
+l [[]],pr.([])
+l [[]],pr.call([])
+l [[]],pr.([])
+l [[]],pr.([])
+
+def t()end
+
+def k()end
+
+l [[],Proc],(pr.(){})
+l [[]],(pr.(){})
+l [[]],(pr.(){})
+l [[]],(pr.(){})
+
+l [[]],(pr.(){})
+l [[]],(pr.(){})
+l [[]],(pr.(){})
+l [[]],(pr.(){})
+l [[]],(pr.call{})
+
+pr=proc{|*,&d|[d&.()]}
+l [[]],pr.call
+l [[]],pr.()
+l [[],Class,nil],pr.()
+
+l [[]],(pr.call{})
+l [[]],(pr.(){})
+(pr.call{})
+l [[]],(pr.call{})
+l [[],Proc],(pr.(){})
+
+l [[]],(pr.(){})
+
+l [],(pr.call{})
+l [],(pr.call{})
+l [Proc],(pr.(){})
+l [],(pr.call{})
+l [Proc],(pr.(){})
+
+l [nil,Proc],(pr.(){})
+l [],(pr.(){})
+l [],(pr.(){})
+l [],(pr.(){})
+l [Proc],(pr.(){})
+l [],(pr.(){})
+
+
+l [NilClass],pr.()
+l [Class],pr.()
+l [],pr.call
+
+l [],(pr.call{})
+l [],(pr.call{})
+l [],(pr.(){})
+l [Proc],(pr.call{})
+l [],(pr.call{})
+l [],(pr.(){})
+l [],(pr.(){})
+l [Proc],(pr.call{})
+
+l [],(pr.call{})
+l [nil],(pr.call{})
+l [],(pr.(){})
+l [],(pr.(){})
+l [],(pr.(){})
+l [Proc],(pr.call{})
+l [],(pr.call{})
+l [],(pr.(){})
+
+def k
+l [],()end
+
+d [[]],(pr.(){})
+
+l [[]],(pr.(){})
+l [[]],(pr.(){})
+l [[]],(pr.(){})
+l [[]],(pr.(){})
+l [[]],(pr.call{})
+pr.()
+l [[],Class],pr.()
+l [[],NilClass],pr.()
+l [[],Class],pr.()
+
+[:d,[],n]
+l [[]],(pr.(){})
+l [[]],(pr.(){})
+l [[]],(pr.(){})
+l [:d,[]],(pr.(){})
+l [[]],(pr.(){})
+l [[]],(pr.(){})
+l [[]],(pr.call{})
+l [[]],(pr.call{})
+
+l [[]],(pr.call{})
+l [[]],(pr.call{})
+l [[]],(pr.call{})
+l [[]],(pr.(){})
+l [[]],(pr.(){})
+l [:d,[]],(pr.(){})
+l [[]],(pr.(){})
+l [[]],(pr.call{})
+l [[]],(pr.(){})
+
+l [[],Proc],(pr.(){})
+l [[]],(pr.(){})
+l [[]],(pr.call{})
+l [[],Proc],(pr.(){})
+
+l [[]],(pr.call{})
+l [:d,[]],(pr.(){})
+l [[]],(pr.(){})
+l [[]],(pr.call{})
+l [[]],(pr.call{})
+l [[]],(pr.(){})
+l [[],Proc],(pr.(){})
+l [[]],(pr.(0,0,0,0,0){})
