@@ -192,7 +192,7 @@ RSpec.describe(EnterpriseScriptService) do
     expect(error).to be_an(EnterpriseScriptService::EngineRuntimeError)
     expect(error.message).to eq("foo")
     expect(error.guest_backtrace).to eq([
-      "raise.rb:2:in Object.foo",
+      "raise.rb:2:in foo",
       "raise.rb:5",
     ])
   end
