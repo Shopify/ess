@@ -86,7 +86,7 @@ TEST(script_runner_test, runs_all_scripts) {
 
   std::vector<ruby_source> sources;
   sources.push_back({"A", "exit"});
-  sources.push_back({"B", "@output = 'yay!'"});
+  sources.push_back({"B", "a = 'yay' ; 3.times { a += '!' } ; @output = a"});
   timer t([](const std::string, const int64_t) {});
   script_runner runner(*engine, t);
   script_data script;
@@ -123,7 +123,8 @@ TEST(script_runner_test, runs_all_scripts) {
           EXPECT_EQ(msgpack::type::EXT, element.key.type);
           if (strncmp("extracted", element.key.via.ext.data(), element.key.via.ext.size) == 0) {
             EXPECT_EQ(msgpack::type::STR, element.val.type);
-            EXPECT_EQ(strncmp("yay!", element.val.via.str.ptr, 4), 0);
+            EXPECT_EQ(strncmp("yay", element.val.via.str.ptr, 3), 0);
+            EXPECT_EQ(strncmp("yay!!!", element.val.via.str.ptr, 6), 0);
           } else if (strncmp("stdout", element.key.via.ext.data(), element.key.via.ext.size) == 0) {
             EXPECT_EQ(msgpack::type::STR, element.val.type);
             EXPECT_EQ(strncmp("(can't read stdout)", element.val.via.str.ptr, 19), 0);
