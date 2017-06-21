@@ -2,7 +2,7 @@
 
 require 'pathname'
 
-OUT_OF_MEMORY_EXPECTED = %w(212971.rb 212983.rb 219293.rb 227322.rb)
+OUT_OF_MEMORY_EXPECTED = %w(212971.rb 212983.rb 219293.rb 227322.rb 239195.rb 240894.rb)
 
 def expected_result?(file)
   return true if $?.success?
