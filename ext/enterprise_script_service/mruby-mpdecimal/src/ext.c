@@ -14,10 +14,6 @@ struct decimal_t {
   mpd_t *decimal;
 };
 
-static void context_free(mrb_state *state, void *data) {
-  mrb_free(state, data);
-}
-
 static void decimal_free(mrb_state *state, void *data) {
   if (data == NULL) {
     return;
