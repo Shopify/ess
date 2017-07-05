@@ -26,36 +26,9 @@ static void decimal_free(mrb_state *state, void *data) {
 
 static const struct mrb_data_type DECIMAL_DATA_TYPE = { "Mpd", decimal_free };
 
-static void *malloc_adaptor(void *data, size_t size) {
-  return mrb_malloc(data, size);
-}
-
-static void *calloc_adaptor(void *data, size_t count, size_t size) {
-  return mrb_calloc(data, count, size);
-}
-
-static void *realloc_adaptor(void *data, void *mem, size_t size) {
-  return mrb_realloc(data, mem, size);
-}
-
-static void free_adaptor(void *data, void *mem) {
-  return mrb_free(data, mem);
-}
-
-static void init_context(mrb_state *state, mpd_context_t *context) {
-  mpd_allocator_t allocator = {
-      .mallocfunc = malloc_adaptor,
-      .callocfunc = calloc_adaptor,
-      .reallocfunc = realloc_adaptor,
-      .freefunc = free_adaptor,
-      .data = state,
-  };
-  mpd_init(context, PRECISION, allocator);
-}
-
-static mrb_value wrap_decimal(mrb_state *state, struct RClass *klass, mpd_t *decimal) {
+static mrb_value wrap_decimal(mrb_state *state, struct RClass *klass, mpd_context_t context, mpd_t *decimal) {
   struct decimal_t *wrapper = mrb_malloc(state, sizeof(struct decimal_t));
-  init_context(state, &wrapper->context);
+  wrapper->context = context;
   wrapper->decimal = decimal;
   struct RData *result = mrb_data_object_alloc(
     state,
@@ -84,6 +57,33 @@ static void check_status(mrb_state *state, uint32_t status) {
     mrb_value code = mrb_funcall(state, mrb_fixnum_value(status), "to_s", 1, mrb_fixnum_value(HEX_BASE));
     mrb_raisef(state, mrb_class_get(state, "RuntimeError"), "bad decimal operation (0x%S)", code);
   }
+}
+
+static void *malloc_adaptor(void *data, size_t size) {
+  return mrb_malloc(data, size);
+}
+
+static void *calloc_adaptor(void *data, size_t count, size_t size) {
+  return mrb_calloc(data, count, size);
+}
+
+static void *realloc_adaptor(void *data, void *mem, size_t size) {
+  return mrb_realloc(data, mem, size);
+}
+
+static void free_adaptor(void *data, void *mem) {
+  return mrb_free(data, mem);
+}
+
+static void init_context(mrb_state *state, mpd_context_t *context) {
+  mpd_allocator_t allocator = {
+      .mallocfunc = malloc_adaptor,
+      .callocfunc = calloc_adaptor,
+      .reallocfunc = realloc_adaptor,
+      .freefunc = free_adaptor,
+      .data = state,
+  };
+  mpd_init(context, PRECISION, allocator);
 }
 
 static mrb_value ext_decimal_initialize(mrb_state *state, mrb_value self) {
@@ -127,7 +127,7 @@ static mrb_value ext_decimal_unary_op(mrb_state *state, mrb_value rself, unary_o
 
   uint32_t status = 0;
   op(result, self->decimal, &self->context, &status);
-  mrb_value rresult = wrap_decimal(state, mrb_class(state, rself), result);
+  mrb_value rresult = wrap_decimal(state, mrb_class(state, rself), self->context, result);
   check_status(state, status);
 
   return rresult;
@@ -143,7 +143,7 @@ static mrb_value ext_decimal_bin_op(mrb_state *state, mrb_value rself, binary_op
 
   uint32_t status = 0;
   op(result, self->decimal, other->decimal, &self->context, &status);
-  mrb_value rresult = wrap_decimal(state, mrb_class(state, rself), result);
+  mrb_value rresult = wrap_decimal(state, mrb_class(state, rself), self->context, result);
   check_status(state, status);
 
   return rresult;
