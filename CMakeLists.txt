@@ -53,6 +53,43 @@ set(TEST_FILES
     tests/options_test.cpp
 )
 
+set(MPDECIMAL
+    ext/enterprise_script_service/mruby-mpdecimal/src/basearith.c
+    ext/enterprise_script_service/mruby-mpdecimal/src/basearith.h
+    ext/enterprise_script_service/mruby-mpdecimal/src/bits.h
+    ext/enterprise_script_service/mruby-mpdecimal/src/constants.c
+    ext/enterprise_script_service/mruby-mpdecimal/src/constants.h
+    ext/enterprise_script_service/mruby-mpdecimal/src/context.c
+    ext/enterprise_script_service/mruby-mpdecimal/src/convolute.c
+    ext/enterprise_script_service/mruby-mpdecimal/src/convolute.h
+    ext/enterprise_script_service/mruby-mpdecimal/src/crt.c
+    ext/enterprise_script_service/mruby-mpdecimal/src/crt.h
+    ext/enterprise_script_service/mruby-mpdecimal/src/difradix2.c
+    ext/enterprise_script_service/mruby-mpdecimal/src/difradix2.h
+    ext/enterprise_script_service/mruby-mpdecimal/src/ext.c
+    ext/enterprise_script_service/mruby-mpdecimal/src/fnt.c
+    ext/enterprise_script_service/mruby-mpdecimal/src/fnt.h
+    ext/enterprise_script_service/mruby-mpdecimal/src/fourstep.c
+    ext/enterprise_script_service/mruby-mpdecimal/src/fourstep.h
+    ext/enterprise_script_service/mruby-mpdecimal/src/io.c
+    ext/enterprise_script_service/mruby-mpdecimal/src/io.h
+    ext/enterprise_script_service/mruby-mpdecimal/src/memory.c
+    ext/enterprise_script_service/mruby-mpdecimal/src/memory.h
+    ext/enterprise_script_service/mruby-mpdecimal/src/mpdecimal.c
+    ext/enterprise_script_service/mruby-mpdecimal/src/mpdecimal.h
+    ext/enterprise_script_service/mruby-mpdecimal/src/mpsignal.c
+    ext/enterprise_script_service/mruby-mpdecimal/src/numbertheory.c
+    ext/enterprise_script_service/mruby-mpdecimal/src/numbertheory.h
+    ext/enterprise_script_service/mruby-mpdecimal/src/sixstep.c
+    ext/enterprise_script_service/mruby-mpdecimal/src/sixstep.h
+    ext/enterprise_script_service/mruby-mpdecimal/src/transpose.c
+    ext/enterprise_script_service/mruby-mpdecimal/src/transpose.h
+    ext/enterprise_script_service/mruby-mpdecimal/src/typearith.h
+    ext/enterprise_script_service/mruby-mpdecimal/src/umodarith.h
+)
+
+add_library(mruby-mpdecimal STATIC ${MPDECIMAL})
+
 add_executable(enterprise_script_service
         ${SOURCE_FILES}
         ext/enterprise_script_service/ext.cpp

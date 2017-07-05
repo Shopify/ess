@@ -2,9 +2,7 @@
 #include <mruby.h>
 #include <mruby/class.h>
 #include <mruby/data.h>
-#include <mruby/proc.h>
 #include <mruby/string.h>
-#include <mruby/variable.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -15,26 +13,23 @@ struct decimal_t {
   mpd_t *decimal;
 };
 
-static void context_free(mrb_state *state, void *data) {
-  mrb_free(state, data);
-}
-
 static void decimal_free(mrb_state *state, void *data) {
   if (data == NULL) {
     return;
   }
 
   struct decimal_t *decimal = data;
-  mpd_del(decimal->context, decimal->decimal);
+  mpd_context_t *ctx = decimal->context;
+  mpd_del(ctx, decimal->decimal);
   mrb_free(state, decimal);
+  mrb_free(state, ctx);
 }
 
-static const struct mrb_data_type CONTEXT_DATA_TYPE = { "MpdContext", context_free };
 static const struct mrb_data_type DECIMAL_DATA_TYPE = { "Mpd", decimal_free };
 
-static mrb_value wrap_decimal(mrb_state *state, struct RClass *klass, mpd_context_t *context, mpd_t *decimal) {
+static mrb_value wrap_decimal(mrb_state *state, struct RClass *klass, mpd_t *decimal) {
   struct decimal_t *wrapper = mrb_malloc(state, sizeof(struct decimal_t));
-  wrapper->context = context;
+  wrapper->context = new_context(state);
   wrapper->decimal = decimal;
   struct RData *result = mrb_data_object_alloc(
     state,
@@ -65,6 +60,35 @@ static void check_status(mrb_state *state, uint32_t status) {
   }
 }
 
+static void *malloc_adaptor(void *data, size_t size) {
+  return mrb_malloc(data, size);
+}
+
+static void *calloc_adaptor(void *data, size_t count, size_t size) {
+  return mrb_calloc(data, count, size);
+}
+
+static void *realloc_adaptor(void *data, void *mem, size_t size) {
+  return mrb_realloc(data, mem, size);
+}
+
+static void free_adaptor(void *data, void *mem) {
+  return mrb_free(data, mem);
+}
+
+static mpd_context_t* new_context(mrb_state *state) {
+  mpd_context_t *context = mrb_malloc(state, sizeof(mpd_context_t));
+  mpd_allocator_t allocator = {
+      .mallocfunc = malloc_adaptor,
+      .callocfunc = calloc_adaptor,
+      .reallocfunc = realloc_adaptor,
+      .freefunc = free_adaptor,
+      .data = state,
+  };
+  mpd_init(context, PRECISION, allocator);
+  return context;
+}
+
 static mrb_value ext_decimal_initialize(mrb_state *state, mrb_value self) {
   mrb_value value = mrb_fixnum_value(0);
   mrb_get_args(state, "|o", &value);
@@ -73,8 +97,7 @@ static mrb_value ext_decimal_initialize(mrb_state *state, mrb_value self) {
     return self;
   }
 
-  mrb_value wrapped_context = mrb_proc_cfunc_env_get(state, 0);
-  mpd_context_t *context = mrb_data_check_get_ptr(state, wrapped_context, &CONTEXT_DATA_TYPE);
+  mpd_context_t *context = new_context(state);
 
   struct decimal_t *decimal = mrb_malloc(state, sizeof(struct decimal_t));
   decimal->context = context;
@@ -107,7 +130,7 @@ static mrb_value ext_decimal_unary_op(mrb_state *state, mrb_value rself, unary_o
 
   uint32_t status = 0;
   op(result, self->decimal, self->context, &status);
-  mrb_value rresult = wrap_decimal(state, mrb_class(state, rself), self->context, result);
+  mrb_value rresult = wrap_decimal(state, mrb_class(state, rself), result);
   check_status(state, status);
 
   return rresult;
@@ -123,7 +146,7 @@ static mrb_value ext_decimal_bin_op(mrb_state *state, mrb_value rself, binary_op
 
   uint32_t status = 0;
   op(result, self->decimal, other->decimal, self->context, &status);
-  mrb_value rresult = wrap_decimal(state, mrb_class(state, rself), self->context, result);
+  mrb_value rresult = wrap_decimal(state, mrb_class(state, rself), result);
   check_status(state, status);
 
   return rresult;
@@ -229,50 +252,11 @@ static mrb_value ext_decimal_to_s(mrb_state *state, mrb_value rself) {
   return result;
 }
 
-static void *malloc_adaptor(void *data, size_t size) {
-  return mrb_malloc(data, size);
-}
-
-static void *calloc_adaptor(void *data, size_t count, size_t size) {
-  return mrb_calloc(data, count, size);
-}
-
-static void *realloc_adaptor(void *data, void *mem, size_t size) {
-  return mrb_realloc(data, mem, size);
-}
-
-static void free_adaptor(void *data, void *mem) {
-  return mrb_free(data, mem);
-}
-
-static mrb_value init_context(mrb_state *state) {
-  struct RClass *c_context = mrb_define_class(state, "DecimalContext", state->object_class);
-  MRB_SET_INSTANCE_TT(c_context, MRB_TT_DATA);
-
-  mpd_context_t *context = mrb_malloc(state, sizeof(mpd_context_t));
-  mpd_allocator_t allocator = {
-    .mallocfunc = malloc_adaptor,
-    .callocfunc = calloc_adaptor,
-    .reallocfunc = realloc_adaptor,
-    .freefunc = free_adaptor,
-    .data = state,
-  };
-  mpd_init(context, PRECISION, allocator);
-  return mrb_obj_value(mrb_data_object_alloc(state, c_context, context, &CONTEXT_DATA_TYPE));
-}
-
 void mrb_mruby_mpdecimal_gem_init(mrb_state *state) {
-  mrb_value context = init_context(state);
-  mrb_gc_register(state, context);
-
   struct RClass *c_decimal = mrb_define_class(state, "Decimal", state->object_class);
   MRB_SET_INSTANCE_TT(c_decimal, MRB_TT_DATA);
 
-  mrb_define_method_raw(
-    state,
-    c_decimal,
-    mrb_intern_cstr(state, "initialize"),
-    mrb_proc_new_cfunc_with_env(state, ext_decimal_initialize, 1, &context));
+  mrb_define_method(state, c_decimal, "initialize", ext_decimal_initialize, MRB_ARGS_NONE());
   mrb_define_method(state, c_decimal, "+", ext_decimal_add, MRB_ARGS_REQ(1));
   mrb_define_method(state, c_decimal, "-", ext_decimal_sub, MRB_ARGS_REQ(1));
   mrb_define_method(state, c_decimal, "*", ext_decimal_mul, MRB_ARGS_REQ(1));
