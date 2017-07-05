@@ -263,6 +263,7 @@ static mrb_value init_context(mrb_state *state) {
 
 void mrb_mruby_mpdecimal_gem_init(mrb_state *state) {
   mrb_value context = init_context(state);
+  mrb_gc_register(state, context);
 
   struct RClass *c_decimal = mrb_define_class(state, "Decimal", state->object_class);
   MRB_SET_INSTANCE_TT(c_decimal, MRB_TT_DATA);
