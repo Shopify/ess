@@ -2,22 +2,17 @@
 #include <mruby.h>
 #include <mruby/class.h>
 #include <mruby/data.h>
-#include <mruby/proc.h>
 #include <mruby/string.h>
-#include <mruby/variable.h>
 #include <stdio.h>
 #include <stdlib.h>
 
 static const ssize_t PRECISION = 64;
+static mpd_context_t default_context;
 
 struct decimal_t {
   mpd_context_t *context;
   mpd_t *decimal;
 };
-
-static void context_free(mrb_state *state, void *data) {
-  mrb_free(state, data);
-}
 
 static void decimal_free(mrb_state *state, void *data) {
   if (data == NULL) {
@@ -29,7 +24,6 @@ static void decimal_free(mrb_state *state, void *data) {
   mrb_free(state, decimal);
 }
 
-static const struct mrb_data_type CONTEXT_DATA_TYPE = { "MpdContext", context_free };
 static const struct mrb_data_type DECIMAL_DATA_TYPE = { "Mpd", decimal_free };
 
 static mrb_value wrap_decimal(mrb_state *state, struct RClass *klass, mpd_context_t *context, mpd_t *decimal) {
@@ -73,22 +67,19 @@ static mrb_value ext_decimal_initialize(mrb_state *state, mrb_value self) {
     return self;
   }
 
-  mrb_value wrapped_context = mrb_proc_cfunc_env_get(state, 0);
-  mpd_context_t *context = mrb_data_check_get_ptr(state, wrapped_context, &CONTEXT_DATA_TYPE);
-
   struct decimal_t *decimal = mrb_malloc(state, sizeof(struct decimal_t));
-  decimal->context = context;
-  decimal->decimal = mpd_qnew(context);
+  decimal->context = &default_context;
+  decimal->decimal = mpd_qnew(&default_context);
   mrb_data_init(self, decimal, &DECIMAL_DATA_TYPE);
 
   uint32_t status = 0;
   if (mrb_fixnum_p(value)) {
-    mpd_qset_i64(decimal->decimal, mrb_fixnum(value), context, &status);
+    mpd_qset_i64(decimal->decimal, mrb_fixnum(value), &default_context, &status);
   } else if (mrb_string_p(value)) {
-    mpd_qset_string(decimal->decimal, mrb_str_to_cstr(state, value), context, &status);
+    mpd_qset_string(decimal->decimal, mrb_str_to_cstr(state, value), &default_context, &status);
   } else {
     mrb_value converted_value = mrb_convert_type(state, value, MRB_TT_STRING, "String", "to_s");
-    mpd_qset_string(decimal->decimal, mrb_str_to_cstr(state, converted_value), context, &status);
+    mpd_qset_string(decimal->decimal, mrb_str_to_cstr(state, converted_value), &default_context, &status);
   }
   if (status & MPD_Conversion_syntax) {
     mrb_raisef(state, mrb_class_get(state, "ArgumentError"), "can't convert %S into Decimal", mrb_inspect(state, value));
@@ -245,11 +236,7 @@ static void free_adaptor(void *data, void *mem) {
   return mrb_free(data, mem);
 }
 
-static mrb_value init_context(mrb_state *state) {
-  struct RClass *c_context = mrb_define_class(state, "DecimalContext", state->object_class);
-  MRB_SET_INSTANCE_TT(c_context, MRB_TT_DATA);
-
-  mpd_context_t *context = mrb_malloc(state, sizeof(mpd_context_t));
+static void init_context(mrb_state *state, mpd_context_t *context) {
   mpd_allocator_t allocator = {
     .mallocfunc = malloc_adaptor,
     .callocfunc = calloc_adaptor,
@@ -258,20 +245,15 @@ static mrb_value init_context(mrb_state *state) {
     .data = state,
   };
   mpd_init(context, PRECISION, allocator);
-  return mrb_obj_value(mrb_data_object_alloc(state, c_context, context, &CONTEXT_DATA_TYPE));
 }
 
 void mrb_mruby_mpdecimal_gem_init(mrb_state *state) {
-  mrb_value context = init_context(state);
+  init_context(state, &default_context);
 
   struct RClass *c_decimal = mrb_define_class(state, "Decimal", state->object_class);
   MRB_SET_INSTANCE_TT(c_decimal, MRB_TT_DATA);
 
-  mrb_define_method_raw(
-    state,
-    c_decimal,
-    mrb_intern_cstr(state, "initialize"),
-    mrb_proc_new_cfunc_with_env(state, ext_decimal_initialize, 1, &context));
+  mrb_define_method(state, c_decimal, "initialize", ext_decimal_initialize, MRB_ARGS_NONE());
   mrb_define_method(state, c_decimal, "+", ext_decimal_add, MRB_ARGS_REQ(1));
   mrb_define_method(state, c_decimal, "-", ext_decimal_sub, MRB_ARGS_REQ(1));
   mrb_define_method(state, c_decimal, "*", ext_decimal_mul, MRB_ARGS_REQ(1));
