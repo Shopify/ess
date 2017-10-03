@@ -1,6 +1,6 @@
 Gem::Specification.new do |spec|
   spec.name = "enterprise_script_service"
-  spec.version = "0.1.0"
+  spec.version = EnterpriseScriptService::VERSION
   spec.date = "2016-10-18"
   spec.summary = "A service that evaluates ruby scripts in a secure way."
   spec.authors = ["Simon Génier"]
