@@ -21,6 +21,3 @@ commands:
     syntax: ""
     desc: "Run specs"
     run: bin/rake spec
-
-packages:
-  - git@github.com:Shopify/dev-shopify.git
