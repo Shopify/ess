@@ -33,7 +33,7 @@ end
 
   spec.extensions = ["ext/enterprise_script_service/Rakefile"]
   spec.homepage = "https://github.com/Shopify/enterprise-script-service"
-  spec.license = "Proprietary"
+  spec.license = "MIT"
   spec.required_ruby_version = '~> 2.2'
 
   spec.add_dependency("msgpack", "~> 1.0")
