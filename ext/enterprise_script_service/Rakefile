@@ -38,8 +38,10 @@ if RUBY_PLATFORM =~ /linux/
     "-L#{LIBSECCOMP_LIB_DIR}",
     "-lseccomp",
   ]
+  LIBCRYPTO_CFLAGS = "-lcrypto"
 else
   LIBSECCOMP_CFLAGS = []
+  LIBCRYPTO_CFLAGS = ""
 end
 
 directory(SERVICE_EXECUTABLE_DIR)
@@ -64,6 +66,7 @@ file(SERVICE_EXECUTABLE => [
     *SERVICE_SOURCES,
     "-lmruby",
     *LIBSECCOMP_CFLAGS,
+    LIBCRYPTO_CFLAGS,
   )
 end
 
@@ -95,6 +98,7 @@ file(SERVICE_TESTS_EXECUTABLE => [
     "-lmruby",
     "-lpthread",
     *LIBSECCOMP_CFLAGS,
+    LIBCRYPTO_CFLAGS,
   )
 end
 

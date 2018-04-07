@@ -11,3 +11,6 @@
 [submodule "tests/googletest"]
 	path = tests/googletest
 	url = https://github.com/google/googletest.git
+[submodule "ext/enterprise_script_service/mruby-digest"]
+	path = ext/enterprise_script_service/mruby-digest
+	url = https://github.com/iij/mruby-digest

@@ -1,5 +1,6 @@
 MRuby::GemBox.new do |conf|
   conf.gem("mruby-mpdecimal")
+  conf.gem("mruby-digest")
 
   conf.gem(core: "mruby-math")
   conf.gem(core: "mruby-struct")
