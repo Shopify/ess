@@ -150,23 +150,26 @@ void emit_ruby_as_msgpack_rec(me_mruby_engine &engine, mrb_value ruby_value, out
       return;
     }
     case MRB_TT_HASH: {
-      struct kh_ht *kh = RHASH_TBL(ruby_value);
+      auto *hash = RHASH(ruby_value);
 
-      if (kh) {
-        auto size = size_t{kh_size(kh)};
-        if (size > UINT32_MAX) {
-          throw fatal_error(status_code::structure_too_deep);
-        }
-        packer.pack_map((uint32_t) size);
+      if (hash) {
+        struct loop_context {
+          me_mruby_engine *engine;
+          out_packer *packer;
+          int *depth;
+        } ctx;
 
-        for (int i = kh_begin(kh), f = kh_end(kh); i < f; ++i) {
-          if (!kh_exist(kh, i)) {
-            continue;
-          }
-
-          emit_ruby_as_msgpack_rec(engine, kh_key(kh, i), packer, depth + 1);
-          emit_ruby_as_msgpack_rec(engine, kh_value(kh, i).v, packer, depth + 1);
-        }
+        ctx.engine = &engine;
+        ctx.packer = &packer;
+        ctx.depth = &depth;
+      
+        mrb_hash_foreach_func *loop_func = [](mrb_state *_mrb, mrb_value key, mrb_value val, void *data) {
+          auto *p = (loop_context *) data;
+          emit_ruby_as_msgpack_rec(*(p->engine), key, *(p->packer), *(p->depth) + 1);
+          emit_ruby_as_msgpack_rec(*(p->engine), val, *(p->packer), *(p->depth) + 1);
+          return 0;
+        };
+        mrb_hash_foreach(engine.state, hash, loop_func, &ctx);
       } else {
         packer.pack_map(0);
       }
