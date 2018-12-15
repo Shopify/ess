@@ -155,9 +155,7 @@ void emit_ruby_as_msgpack_rec(me_mruby_engine &engine, mrb_value ruby_value, out
       if (hash) {
         int64_t size = mrb_fixnum(mrb_funcall_argv(engine.state, ruby_value, mrb_intern_lit(engine.state, "size"), 0, NULL));
         if (size > UINT32_MAX) {
-          me_mruby_engine *engine;
           throw fatal_error(status_code::structure_too_deep);
-          out_packer *packer;
         }
         packer.pack_map((uint32_t) size);
 
