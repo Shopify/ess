@@ -1,7 +1,6 @@
 name: enterprise-script-service
 
 up:
-  - xcode_clt
   - ruby:
       version: 2.4.3
   - bundler
