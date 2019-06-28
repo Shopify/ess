@@ -3,4 +3,10 @@ language: ruby
 rvm:
   - 2.4.4
 
+# https://docs.travis-ci.com/user/languages/ruby/#bundler-20
+# We are still using bundler 1.17
+before_install:
+  - gem uninstall -v '>= 2' -i $(rvm gemdir)@global -ax bundler || true
+  - gem install bundler -v '~> 1.6'
+
 script: bundle exec rake compile
