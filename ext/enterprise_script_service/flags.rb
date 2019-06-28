@@ -16,6 +16,11 @@ module Flags
       end
     end
 
+    def library_paths
+      # Necessary because of https://github.com/mruby/mruby/issues/4537
+      %w(/usr/local/lib /usr/lib)
+    end
+
     def io_safe_defines
       %w(
         _GNU_SOURCE
