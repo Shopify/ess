@@ -127,6 +127,11 @@ namespace(:mruby) do
 
   task(:compile) do
     within_mruby do
+      if RUBY_VERSION >= '2.7'
+        sed = 'sed'
+        sed = 'gsed' if RUBY_PLATFORM.match?(/darwin/i)
+        sh(sed, "-i", "-e", 's/{ :verbose => $verbose }/verbose: $verbose/', "Rakefile")
+      end
       sh("ruby", "./minirake")
     end
   end
