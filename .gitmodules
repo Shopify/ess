@@ -1,7 +1,7 @@
-[submodule "mruby"]
+[submodule "ext/enterprise_script_service/mruby"]
 	path = ext/enterprise_script_service/mruby
-	url = https://github.com/mruby/mruby.git
-	branch = master
+	url = https://github.com/Shopify/mruby.git
+	branch = mruby-engine-submodule
 [submodule "msgpack"]
 	path = ext/enterprise_script_service/msgpack
 	url = https://github.com/msgpack/msgpack-c.git
