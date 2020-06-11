@@ -16,7 +16,7 @@ ROOT = Pathname.new(__dir__).join("../..")
 SERVICE_EXECUTABLE_DIR = ROOT.join("bin")
 SERVICE_EXECUTABLE = SERVICE_EXECUTABLE_DIR.join("enterprise_script_service").to_s
 SERVICE_SOURCES = Dir.glob("*.cpp").map(&:to_s)
-Dir.chdir("#{ROOT}/tests") do 
+Dir.chdir("#{ROOT}/tests") do
   SERVICE_TESTS = Dir.glob("*_test.cpp").map { |f| "#{Dir.pwd}/#{f.to_s}"}
   GOOGLE_TEST_DIR = "#{Dir.pwd}/googletest/googletest"
   SERVICE_TESTS << "#{GOOGLE_TEST_DIR}/src/gtest-all.cc"
@@ -29,6 +29,8 @@ MRUBY_LIB = MRUBY_LIB_DIR.join("libmruby.a")
 
 LIBSECCOMP_DIR = Pathname.new(__dir__).join("libseccomp")
 LIBSECCOMP_LIB_DIR = LIBSECCOMP_DIR.join("src/.libs")
+
+CXX = ENV['CXX'] || 'g++'
 
 if RUBY_PLATFORM =~ /linux/
   LIBSECCOMP_CFLAGS = [
@@ -49,7 +51,7 @@ file(SERVICE_EXECUTABLE => [
   MRUBY_LIB,
 ]) do
   sh(
-    "g++",
+    CXX,
     "--std=c++11",
     "-Wall",
     "-Wextra",
@@ -75,7 +77,7 @@ file(SERVICE_TESTS_EXECUTABLE => [
   MRUBY_LIB,
 ]) do
   sh(
-    "g++",
+    CXX,
     "--std=c++11",
     "-Wall",
     "-Wextra",
@@ -125,6 +127,11 @@ namespace(:mruby) do
 
   task(:compile) do
     within_mruby do
+      if RUBY_VERSION >= '2.7'
+        extra_args = []
+        extra_args << '' if RUBY_PLATFORM.match?(/darwin/i)
+        sh('sed', '-i', *extra_args, 's/{ :verbose => $verbose }/verbose: $verbose/', 'Rakefile')
+      end
       sh("ruby", "./minirake")
     end
   end
