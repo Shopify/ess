@@ -1,7 +1,6 @@
 name: enterprise-script-service
 
 up:
-  - xcode_clt
   - ruby:
       package: shopify/shopify/shopify-ruby
       version: 2.2.3p172-shopify
