@@ -11,9 +11,22 @@ RSpec.describe(EnterpriseScriptService) do
       ],
       timeout: 1000,
     )
+    expect(result.errors).to eq([])
     expect(result.success?).to be(true)
     expect(result.output).to eq([26803196617, 0.475])
     expect(result.stdout).to eq("hello")
+  end
+
+  it "breaks out of a proc just fine" do
+    result = EnterpriseScriptService.run(
+      input: {},
+      sources: [
+        ["proc", "[1, 2].each { |i| break }"],
+      ],
+      timeout: 1000,
+    )
+    expect(result.errors).to eq([])
+    expect(result.success?).to be(true)
   end
 
   it "round trips binary strings" do
