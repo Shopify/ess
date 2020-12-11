@@ -10,15 +10,15 @@ commands:
   recompile:
     syntax: ""
     desc: "Compiles native extention"
-    run: bin/rake clobber compile
+    run: bundle exec rake clobber compile
   compile:
     syntax: ""
     desc: "Compiles native extention"
-    run: bin/rake compile
+    run: bundle exec rake compile
   spec:
     syntax: ""
     desc: "Run specs"
-    run: bin/rake spec
+    run: bundle exec rake spec
 
 packages:
   - git@github.com:Shopify/dev-shopify.git
