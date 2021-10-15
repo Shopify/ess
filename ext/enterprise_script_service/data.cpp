@@ -74,12 +74,13 @@ void mruby_data_writer::emit_output() {
 void mruby_data_writer::emit_stat() {
   std::uint64_t instructions = engine.instruction_count;
   std::uint64_t total = engine.instruction_total;
+  std::uint64_t execution_time_us = engine.execution_time_us;
   struct meminfo mem_info = me_memory_pool_info(engine.allocator);
   std::uint64_t memory = mem_info.arena - mem_info.fordblks;
 
   writer.packer.pack_array(2);
   writer.packer.pack(symbol{"stat"});
-  writer.packer.pack_map(4);
+  writer.packer.pack_map(5);
   writer.packer.pack(symbol{"instructions"});
   writer.packer.pack_int64(instructions);
   writer.packer.pack(symbol{"total_instructions"});
@@ -88,6 +89,8 @@ void mruby_data_writer::emit_stat() {
   writer.packer.pack_int64(memory);
   writer.packer.pack(symbol{"bytes_in"});
   writer.packer.pack_uint64(in);
+  writer.packer.pack(symbol{"execution_time_us"});
+  writer.packer.pack_uint64(execution_time_us);
 }
 
 mruby_data_writer::~mruby_data_writer() {
