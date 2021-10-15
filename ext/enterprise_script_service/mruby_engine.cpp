@@ -207,6 +207,7 @@ struct me_mruby_engine *me_mruby_engine_new(
   self->instruction_quota = instruction_quota;
   self->instruction_count = 0;
   self->instruction_total = 0;
+  self->execution_time_us = 0;
   self->limit_instructions = true;
   self->quota_error_raised = false;
   self->state->code_fetch_hook = mruby_engine_code_fetch_hook;
