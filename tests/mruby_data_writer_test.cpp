@@ -230,7 +230,7 @@ TEST(mruby_data_writer_test, emits_stat) {
         break;
       case 1:
         EXPECT_EQ(msgpack::type::MAP, item.type);
-        EXPECT_EQ(uint32_t{4}, item.via.map.size);
+        EXPECT_EQ(uint32_t{5}, item.via.map.size);
         for (auto && element: item.via.map) {
           EXPECT_EQ(msgpack::type::EXT, element.key.type);
           if (strncmp("instructions", element.key.via.ext.data(), element.key.via.ext.size) == 0) {
@@ -242,6 +242,8 @@ TEST(mruby_data_writer_test, emits_stat) {
           } else if (strncmp("bytes_in", element.key.via.ext.data(), element.key.via.ext.size) == 0) {
             EXPECT_EQ(msgpack::type::POSITIVE_INTEGER, element.val.type);
             EXPECT_EQ(std::uint64_t{42}, element.val.via.u64);
+          } else if (strncmp("execution_time_us", element.key.via.ext.data(), element.key.via.ext.size) == 0) {
+            EXPECT_EQ(msgpack::type::POSITIVE_INTEGER, element.val.type);
           } else {
             FAIL();
           }
