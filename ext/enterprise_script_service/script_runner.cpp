@@ -47,6 +47,7 @@ bool script_runner::run(script_data &script, data_writer &writer, unsigned int i
         {
           auto timing = timer_.measure("eval");
           engine_.eval(pProc);
+          engine_.execution_time_us = timing.get_elapsed_time_us();
         }
       } catch (error_base &err) {
         success = false;

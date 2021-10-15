@@ -32,6 +32,11 @@ timer::scope timer::measure(const std::string name) const {
   return s;
 }
 
+std::int64_t timer::scope::get_elapsed_time_us() {
+  auto now = read_time_stamp_counter();
+  return std::chrono::microseconds((now - base_) / cpu_time_scale_).count();
+}
+
 timer::scope::scope(const std::string name, const timer& t)
   : name_(name)
   , cpu_time_scale_(t.cpu_time_scale_)
@@ -41,8 +46,6 @@ timer::scope::scope(const std::string name, const timer& t)
 
 timer::scope::~scope() {
   if (!name_.empty() && writer_) {
-    auto now = read_time_stamp_counter();
-    auto elapsed = std::chrono::microseconds((now - base_) / cpu_time_scale_);
-    writer_(name_, std::int64_t{elapsed.count()});
+    writer_(name_, this->get_elapsed_time_us());
   }
 }

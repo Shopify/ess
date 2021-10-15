@@ -31,6 +31,7 @@ struct me_mruby_engine {
   std::uint64_t instruction_total;
   std::uint64_t instruction_count;
   std::uint64_t instruction_quota;
+  std::uint64_t execution_time_us;
   bool limit_instructions;
   bool quota_error_raised;
   std::int64_t ctx_switches_v;
