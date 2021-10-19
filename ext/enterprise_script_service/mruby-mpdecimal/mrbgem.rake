@@ -6,6 +6,6 @@ MRuby::Gem::Specification.new('mruby-mpdecimal') do |spec|
 
   spec.cc do
     cc.flags += %w(-Wno-declaration-after-statement)
-    cc.defines += %w(CONFIG_64 ASM HAVE_UINT128_T)
+    cc.defines += %w(CONFIG_64 ANSI HAVE_UINT128_T)
   end
 end
