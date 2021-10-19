@@ -32,10 +32,12 @@ TEST(script_runner_test, defaults_to_counting_all_instructions) {
   close(fd[1]);
   auto instruction_total = engine->instruction_total;
   auto instruction_count = engine->instruction_count;
+  auto execution_time_us = engine->execution_time_us;
   me_mruby_engine_destroy(engine);
   me_memory_pool_destroy(allocator);
   close(fd[0]);
   EXPECT_EQ(instruction_total, instruction_count);
+  EXPECT_EQ(execution_time_us, std::int64_t{0});
 }
 
 TEST(script_runner_test, can_bypass_deserialization_instructions) {
@@ -63,11 +65,13 @@ TEST(script_runner_test, can_bypass_deserialization_instructions) {
   close(fd[1]);
   auto instruction_total = engine->instruction_total;
   auto instruction_count = engine->instruction_count;
+  auto execution_time_us = engine->execution_time_us;
   me_mruby_engine_destroy(engine);
   me_memory_pool_destroy(allocator);
   close(fd[0]);
   EXPECT_LT(instruction_count, instruction_total);
   EXPECT_EQ(instruction_count, std::uint64_t{3});
+  EXPECT_EQ(execution_time_us, std::int64_t{0});
 }
 
 TEST(script_runner_test, runs_all_scripts) {
@@ -94,6 +98,7 @@ TEST(script_runner_test, runs_all_scripts) {
   runner.run(script, writer);
   close(fd[1]);
   EXPECT_EQ(engine->instruction_total, engine->instruction_count);
+  EXPECT_GT(engine->execution_time_us, std::int64_t{0});
   me_mruby_engine_destroy(engine);
   me_memory_pool_destroy(allocator);
 

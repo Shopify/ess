@@ -41,3 +41,16 @@ TEST(timer_test, writer_gets_proper_timing) {
     usleep(time);
   }
 }
+
+TEST(timer_test, get_elapsed_time_us_returns_proper_time) {
+  std::int64_t time = 42;
+  auto w = [time](const std::string, const std::int64_t) { };
+  timer t(w);
+
+  {
+    auto scope = t.measure("foo");
+    EXPECT_LT(scope.get_elapsed_time_us(), time);
+    usleep(time);
+    EXPECT_GE(scope.get_elapsed_time_us(), time);
+  }
+}
