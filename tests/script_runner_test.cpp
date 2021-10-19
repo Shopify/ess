@@ -90,7 +90,7 @@ TEST(script_runner_test, runs_all_scripts) {
 
   std::vector<ruby_source> sources;
   sources.push_back({"A", "exit"});
-  sources.push_back({"B", "@output = 'yay!'"});
+  sources.push_back({"B", "a = 'yay' ; 3.times { a += '!' } ; @output = a"});
   timer t([](const std::string, const int64_t) {});
   script_runner runner(*engine, t);
   script_data script;
