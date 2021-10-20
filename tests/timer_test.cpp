@@ -4,11 +4,6 @@
 #include "timer.hpp"
 #include "gtest/gtest.h"
 
-TEST(timer_test, measure_cpu_time_scale_on_init) {
-  timer t(nullptr);
-  EXPECT_GT(t.cpu_time_scale_, std::uint64_t{0});
-}
-
 TEST(timer_test, writes_output_once) {
   int invokes = 0;
   auto w = [&invokes](const std::string, const std::int64_t) {

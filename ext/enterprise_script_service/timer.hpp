@@ -10,14 +10,13 @@ using cpu_time_scale = std::uint64_t;
 
 struct timer {
 
-  std::uint64_t cpu_time_scale_;
   std::function<void(const std::string, const std::int64_t)> writer;
 
   timer(std::function<void(const std::string, const std::int64_t)> writer);
 
   struct scope {
     std::string name_;
-    std::uint64_t cpu_time_scale_, base_;
+    std::chrono::time_point<std::chrono::steady_clock> base_;
     std::function<void(const std::string, const std::int64_t)> writer_;
 
     std::int64_t get_elapsed_time_us();
