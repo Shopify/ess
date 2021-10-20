@@ -10,7 +10,6 @@ using cpu_time_scale = std::uint64_t;
 
 struct timer {
 
-  std::uint64_t cpu_time_scale_;
   std::function<void(const std::string, const std::int64_t)> writer;
 
   timer(std::function<void(const std::string, const std::int64_t)> writer);
