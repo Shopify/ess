@@ -30,6 +30,8 @@ module EnterpriseScriptService
 
       begin
         yield EnterpriseScriptService::ServiceChannel.new(in_writer, out_reader)
+      rescue Timeout::Error
+        p [:timeout, out_reader.read]
       ensure
         code = spawner.wait(pid, Process::WNOHANG) || begin
           begin
