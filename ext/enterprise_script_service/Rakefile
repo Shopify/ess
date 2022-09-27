@@ -161,7 +161,7 @@ namespace(:libseccomp) do
   task(:compile) do
     within_libseccomp do
       sh("./autogen.sh") unless File.exist?(LIBSECCOMP_DIR.join("configure"))
-      sh("./configure", "--enable-shared=no") unless File.exist?(LIBSECCOMP_DIR.join("Makefile"))
+      sh("./configure", "--disable-shared") unless File.exist?(LIBSECCOMP_DIR.join("Makefile"))
       sh("make")
     end
   end
