@@ -183,13 +183,11 @@ mrb_value msgpack_to_ruby(me_mruby_engine &engine, const msgpack::object &msgpac
     engine.check_exception();
     return ruby_value;
   } else if (msgpack_value.type == msgpack::type::STR) {
-    auto string_value = msgpack_value.as<std::string>();
-    auto ruby_value = mrb_str_new(engine.state, string_value.data(), string_value.size());
+    auto ruby_value = mrb_str_new(engine.state, msgpack_value.via.str.ptr, msgpack_value.via.str.size);
     engine.check_exception();
     return ruby_value;
   } else if (msgpack_value.type == msgpack::type::BIN) {
-    auto string_value = msgpack_value.as<std::vector<char>>();
-    auto ruby_value = mrb_str_new(engine.state, string_value.data(), string_value.size());
+    auto ruby_value = mrb_str_new(engine.state, msgpack_value.via.str.ptr, msgpack_value.via.str.size);
     engine.check_exception();
     return ruby_value;
   } else if (msgpack_value.type == msgpack::type::ARRAY) {
