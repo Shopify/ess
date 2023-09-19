@@ -254,4 +254,45 @@ RSpec.describe(EnterpriseScriptService) do
     expect(result.output).to eq(nil)
     expect(result.stdout).to eq("hello")
   end
+
+  it "accepts large inputs" do
+    result = EnterpriseScriptService.run(
+      input: "a" * 180 * 1024, # 180KiB
+      sources: [],
+      timeout: 1000,
+    )
+    expect(result.success?).to be(true)
+  end
+
+  it "fails gracefully when input is too large" do
+    result = EnterpriseScriptService.run(
+      input: "a" * 8 * 1024 * 1024, # 8MiB, total limit
+      sources: [],
+      timeout: 1000,
+    )
+    expect(result.success?).to be(false)
+    expect(result.errors).to eq([EnterpriseScriptService::EngineMemoryQuotaError.new])
+  end
+
+  it "roundtrips input with null bytes" do
+    assert_roundtrip_input("foo\0bar")
+  end
+
+  it "roundtrips emojis" do
+    assert_roundtrip_input("😅")
+  end
+
+  private
+
+  def assert_roundtrip_input(input)
+    result = EnterpriseScriptService.run(
+      input: input,
+      sources: [
+        ["foo", "@output = @input"],
+      ],
+      timeout: 1000,
+    )
+    expect(result.success?).to be(true)
+    expect(result.output).to eq(input)
+  end
 end
