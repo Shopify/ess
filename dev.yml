@@ -1,8 +1,7 @@
 name: enterprise-script-service
 
 up:
-  - ruby:
-      version: 2.5.8
+  - ruby
   - bundler
   - submodules
 
