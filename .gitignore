@@ -1,7 +1,6 @@
 .idea
 .vagrant
 .bundle
-Gemfile.lock
 tmp
 bin/enterprise_script_service
 bin/enterprise_script_service_tests
