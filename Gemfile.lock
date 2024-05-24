@@ -29,12 +29,12 @@ GEM
       rainbow (= 2.2.2)
       rest-client (~> 2.0)
       thor (~> 1.2)
-    pry (0.13.1)
+    pry (0.14.2)
       coderay (~> 1.1)
       method_source (~> 1.0)
-    pry-byebug (3.9.0)
+    pry-byebug (3.10.1)
       byebug (~> 11.0)
-      pry (~> 0.13.0)
+      pry (>= 0.13, < 0.15)
     rainbow (2.2.2)
       rake
     rake (13.2.0)
@@ -68,14 +68,12 @@ PLATFORMS
 
 DEPENDENCIES
   bundler
-  domain_name (~> 0.5.20190701)
   enterprise_script_service!
   package_cloud
-  pry-byebug (~> 3.9.0)
+  pry-byebug (~> 3.9)
   rake
   rake-compiler (~> 0.9)
   rspec (~> 3.5)
-  thor (~> 1.2.2)
 
 BUNDLED WITH
    2.5.7
