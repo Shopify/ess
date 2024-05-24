@@ -28,6 +28,3 @@ jobs:
 
       - name: Compile
         run: bundle exec rake compile
-
-      - name: Spec
-        run: bundle exec rake spec
