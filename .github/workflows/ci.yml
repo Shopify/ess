@@ -1,0 +1,31 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  ci:
+    runs-on: ${{ matrix.os }}
+    name: Ruby ${{ matrix.ruby }} / ${{ matrix.os }}
+    strategy:
+      matrix:
+        ruby: ["3.2", "3.3"]
+        os: ["ubuntu-24.04", "ubuntu-22.04"]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+
+      - name: Set up Ruby ${{ matrix.ruby }}
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+          bundler-cache: true
+          bundler: latest
+          rubygems: 3.1.2
+
+      - name: Compile
+        run: bundle exec rake compile
