@@ -11,6 +11,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     name: Ruby ${{ matrix.ruby }} / ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
         ruby: ["3.2", "3.3"]
         os: ["ubuntu-24.04", "ubuntu-22.04"]
