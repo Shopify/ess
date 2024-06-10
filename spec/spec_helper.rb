@@ -1,5 +1,4 @@
 require("enterprise_script_service")
-require("pry")
 
 RSpec.configure do |config|
   config.expect_with(:rspec) do |expectations|
