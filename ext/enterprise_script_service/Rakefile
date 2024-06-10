@@ -106,7 +106,7 @@ end
 
 task(mrproper: [:clean, :"mruby:mrproper", :"libseccomp:mrproper"])
 
-task(default: [SERVICE_EXECUTABLE, :test])
+task(default: [SERVICE_EXECUTABLE])
 
 task(test: [SERVICE_TESTS_EXECUTABLE]) do
   sh(SERVICE_TESTS_EXECUTABLE)
