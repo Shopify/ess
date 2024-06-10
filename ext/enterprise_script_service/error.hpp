@@ -2,6 +2,7 @@
 #define ENTERPRISE_SCRIPT_SERVICE_ERROR_HPP
 
 #include <exception>
+#include <cstdint>
 #include "data.hpp"
 
 enum struct status_code {

@@ -2,6 +2,7 @@
 #define ENTERPRISE_SCRIPT_SERVICE_OPTIONS_HPP
 
 #include <ctype.h>
+#include <cstdint>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
