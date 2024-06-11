@@ -37,7 +37,11 @@ module EnterpriseScriptService
         service_process: service_process,
         message_processor_factory: EnterpriseScriptService::MessageProcessor,
       )
-      runner.run(size, encoded)
+      result = runner.run(size, encoded)
+
+      binding.break
+
+      result
     end
 
     private

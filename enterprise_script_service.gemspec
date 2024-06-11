@@ -42,4 +42,5 @@ end
   spec.add_development_dependency("rake", "~> 13.2")
   spec.add_development_dependency("rake-compiler", "~> 0.9")
   spec.add_development_dependency("rspec", "~> 3.5")
+  spec.add_development_dependency("debug")
 end
