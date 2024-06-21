@@ -92,17 +92,31 @@ Ruby code is in `lib/`
 == Other useful things
 
  - There is a `CMakeLists.txt` that's mainly there for CLion support; we don't use cmake to build any of this.
- - You can use vagrant to bootstrap a VM to test under Linux while on Darwin; this is useful when testing `seccomp`.
+ - You can use UTM to bootstrap an x86_64 VM to test with Linux while on MacOS; this is useful when testing `seccomp`.
+   Note that the `script_runner_test.defaults_to_counting_all_instructions` and
+   `script_runner_test.can_bypass_deserialization_instructions` tests will fail with `execution_time_us` being greater
+   than `0` due to execution time taking longer because the tests are being run in an emulated environment. As long as
+   all tests pass in CI, it's fine if they fail in UTM when running on emulated hardware.
 
-=== Vagrant
+=== Ubuntu VM
 
 [source]
 ----
-$ vagrant up
-$ vagrant ssh
-vagrant@vagrant-ubuntu-trusty-64:~$ cd /vagrant
-vagrant@vagrant-ubuntu-trusty-64:/vagrant$ bundle install
-vagrant@vagrant-ubuntu-trusty-64:/vagrant$ git submodule init
-vagrant@vagrant-ubuntu-trusty-64:/vagrant$ git submodule update
-vagrant@vagrant-ubuntu-trusty-64:/vagrant$ bin/rake
-----
+$ sudo apt-get update
+$ sudo apt-get upgrade
+$ sudo apt-add-repository -y ppa:rael-gc/rvm
+$ sudo apt-get update
+$ sudo apt-get install rvm build-essential git libncurses5-dev libgmp-dev libssl-dev openssh-server net-tools gdb
+$ sudo systemctl start ssh
+$ ifconfig # record the IP address for the non-loopback interface
+$ sudo usermod -a -G rvm $USER
+$ sudo reboot
+$ rvm install 3.3.0 # (this may take a while)
+$ git clone https://github.com/Shopify/ess.git
+$ cd ess
+$ git submodule update --init --recursive
+$ bundle install
+$ bin/rake compile
+
+To SSH in:
+$ ssh <vm_username>@<vm_ipaddress>
