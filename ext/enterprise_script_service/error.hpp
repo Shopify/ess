@@ -1,6 +1,7 @@
 #ifndef ENTERPRISE_SCRIPT_SERVICE_ERROR_HPP
 #define ENTERPRISE_SCRIPT_SERVICE_ERROR_HPP
 
+#include <cstdint>
 #include <exception>
 #include "data.hpp"
 
