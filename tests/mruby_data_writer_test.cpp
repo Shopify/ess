@@ -32,7 +32,7 @@ TEST(mruby_data_writer_test, outputs_valid_data) {
 
   char output[BUFSIZE];
   ssize_t r, in = 0;
-  while ((r = read(fd[0], &output + in, (size_t) (BUFSIZE - in))) > 0) {
+  while ((r = read(fd[0], output + in, (size_t) (BUFSIZE - in))) > 0) {
     if ((in += r) >= BUFSIZE) break;
   }
 
@@ -105,7 +105,7 @@ TEST(mruby_data_writer_test, throws_on_too_deep_stack) {
 
   char output[BUFSIZE];
   ssize_t r, in = 0;
-  while ((r = read(fd[0], &output + in, (size_t) (BUFSIZE - in))) > 0) {
+  while ((r = read(fd[0], output + in, (size_t) (BUFSIZE - in))) > 0) {
     if ((in += r) >= BUFSIZE) break;
   }
 
@@ -143,7 +143,7 @@ TEST(mruby_data_writer_test, extracts_data) {
 
   char output[BUFSIZE];
   ssize_t r, in = 0;
-  while ((r = read(fd[0], &output + in, (size_t) (BUFSIZE - in))) > 0) {
+  while ((r = read(fd[0], output + in, (size_t) (BUFSIZE - in))) > 0) {
     if ((in += r) >= BUFSIZE) break;
   }
 
@@ -210,7 +210,7 @@ TEST(mruby_data_writer_test, emits_stat) {
 
   char output[BUFSIZE];
   ssize_t r, in = 0;
-  while ((r = read(fd[0], &output + in, (size_t) (BUFSIZE - in))) > 0) {
+  while ((r = read(fd[0], output + in, (size_t) (BUFSIZE - in))) > 0) {
     if ((in += r) >= BUFSIZE) break;
   }
 

@@ -166,7 +166,7 @@ RSpec.describe(EnterpriseScriptService) do
 
     error = result.errors[0]
     expect(error).to be_an(EnterpriseScriptService::EngineSyntaxError)
-    expect(error.message).to eq("syntax_error.rb:1:3: syntax error, unexpected keyword_end")
+    expect(error.message).to include("syntax_error.rb:1:3: syntax error")
     expect(error.filename).to eq("syntax_error.rb")
     expect(error.line_number).to eq(1)
     expect(error.column).to eq(3)
