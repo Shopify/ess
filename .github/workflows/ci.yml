@@ -8,7 +8,7 @@ on:
 
 jobs:
   ci:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     name: Ruby ${{ matrix.ruby }} / ${{ matrix.os }}
     strategy:
       matrix:
