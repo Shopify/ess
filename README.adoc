@@ -93,10 +93,11 @@ Ruby code is in `lib/`
 
  - There is a `CMakeLists.txt` that's mainly there for CLion support; we don't use cmake to build any of this.
  - You can use UTM to bootstrap an x86_64 VM to test with Linux while on MacOS; this is useful when testing `seccomp`.
-   Note that the `script_runner_test.defaults_to_counting_all_instructions` and
+   Ubuntu 24.04 Server for AMD64 is the recommended Linux image to use.  Note that the
+   `script_runner_test.defaults_to_counting_all_instructions` and
    `script_runner_test.can_bypass_deserialization_instructions` tests will fail with `execution_time_us` being greater
    than `0` due to execution time taking longer because the tests are being run in an emulated environment. As long as
-   all tests pass in CI, it's fine if they fail in UTM when running on emulated hardware.
+   all tests pass in CI, it's fine if they fail in UTM when running on emulated hardware. 
 
 === Ubuntu VM
 
@@ -120,3 +121,5 @@ $ bin/rake compile
 
 To SSH in:
 $ ssh <vm_username>@<vm_ipaddress>
+
+If you use VS Code, you can also use the _Remote-SSH: Connect to Host..._ functionality in VS Code to connect to the VM.
