@@ -29,7 +29,7 @@ TEST(data_writer_test, outputs_measurements) {
 
   char output[BUFSIZE];
   ssize_t r, in = 0;
-  while ((r = read(fd[0], &output + in, (size_t) (BUFSIZE - in))) > 0) {
+  while ((r = read(fd[0], output + in, (size_t) (BUFSIZE - in))) > 0) {
     if ((in += r) >= BUFSIZE) break;
   }
   close(fd[0]);
