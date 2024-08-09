@@ -34,11 +34,10 @@ end
   spec.extensions = ["ext/enterprise_script_service/Rakefile"]
   spec.homepage = "https://github.com/Shopify/enterprise-script-service"
   spec.license = "MIT"
-  spec.required_ruby_version = '>= 2.5'
+  spec.required_ruby_version = '>= 3.1'
 
   spec.add_dependency("msgpack", "~> 1.0")
   spec.add_development_dependency("bundler")
-  # Newer versions don't work with Ruby 2.5 and 2.6
   spec.add_development_dependency("rake", "~> 13.2")
   spec.add_development_dependency("rake-compiler", "~> 0.9")
   spec.add_development_dependency("rspec", "~> 3.5")

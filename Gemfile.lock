@@ -59,13 +59,11 @@ PLATFORMS
 
 DEPENDENCIES
   bundler
-  domain_name (~> 0.5.20190701)
   enterprise_script_service!
   package_cloud
   rake
   rake-compiler (~> 0.9)
   rspec (~> 3.5)
-  thor (~> 1.2.2)
 
 BUNDLED WITH
    2.5.7
