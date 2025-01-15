@@ -53,6 +53,7 @@ file(SERVICE_EXECUTABLE => [
   sh(
     CXX,
     "--std=c++11",
+    "-include", "cstdint",
     "-Wall",
     "-Wextra",
     "-Imsgpack/include",
