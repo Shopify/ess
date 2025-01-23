@@ -15,6 +15,7 @@ MESSAGE
 ROOT = Pathname.new(__dir__).join("../..")
 SERVICE_EXECUTABLE_DIR = ROOT.join("bin")
 SERVICE_EXECUTABLE = SERVICE_EXECUTABLE_DIR.join("enterprise_script_service").to_s
+SERVICE_EXECUTABLE_NO_GENERATIONAL_GC = SERVICE_EXECUTABLE_DIR.join("enterprise_script_service_no_gen_gc").to_s
 SERVICE_SOURCES = Dir.glob("*.cpp").map(&:to_s)
 Dir.chdir("#{ROOT}/tests") do
   SERVICE_TESTS = Dir.glob("*_test.cpp").map { |f| "#{Dir.pwd}/#{f.to_s}"}
@@ -22,10 +23,13 @@ Dir.chdir("#{ROOT}/tests") do
   SERVICE_TESTS << "#{GOOGLE_TEST_DIR}/src/gtest-all.cc"
   SERVICE_TESTS << "#{GOOGLE_TEST_DIR}/src/gtest_main.cc"
   SERVICE_TESTS_EXECUTABLE = SERVICE_EXECUTABLE_DIR.join("enterprise_script_service_tests").to_s
+  SERVICE_NO_GENERATIONAL_GC_TESTS_EXECUTABLE = SERVICE_EXECUTABLE_DIR.join("enterprise_script_service_no_gen_gc_tests").to_s
 end
 
 MRUBY_LIB_DIR = MRUBY_DIR.join("build/sandbox/lib")
+MRUBY_NO_GENERATIONAL_GC_LIB_DIR = MRUBY_DIR.join("build/sandbox_no_gen_gc/lib")
 MRUBY_LIB = MRUBY_LIB_DIR.join("libmruby.a")
+MRUBY_NO_GENERATIONAL_GC_LIB = MRUBY_NO_GENERATIONAL_GC_LIB_DIR.join("libmruby.a")
 
 LIBSECCOMP_DIR = Pathname.new(__dir__).join("libseccomp")
 LIBSECCOMP_LIB_DIR = LIBSECCOMP_DIR.join("src/.libs")
@@ -67,6 +71,29 @@ file(SERVICE_EXECUTABLE => [
   )
 end
 
+file(SERVICE_EXECUTABLE_NO_GENERATIONAL_GC => [
+  SERVICE_EXECUTABLE_DIR,
+  *SERVICE_SOURCES,
+  __FILE__,
+  MRUBY_NO_GENERATIONAL_GC_LIB,
+]) do
+  sh(
+    CXX,
+    "--std=c++11",
+    "-Wall",
+    "-Wextra",
+    "-Imsgpack/include",
+    "-Imruby/include",
+    "-L#{MRUBY_NO_GENERATIONAL_GC_LIB_DIR}",
+    *Flags.cflags,
+    *Flags.defines_with_no_gc.map { |define| "-D#{define}" },
+    "-o", SERVICE_EXECUTABLE_NO_GENERATIONAL_GC,
+    *SERVICE_SOURCES,
+    "-lmruby",
+    *LIBSECCOMP_CFLAGS,
+  )
+end
+
 SERVICE_SOURCES_NO_MAIN = SERVICE_SOURCES.select { |f| f != "ext.cpp"}
 
 file(SERVICE_TESTS_EXECUTABLE => [
@@ -98,26 +125,58 @@ file(SERVICE_TESTS_EXECUTABLE => [
   )
 end
 
+file(SERVICE_NO_GENERATIONAL_GC_TESTS_EXECUTABLE => [
+  SERVICE_EXECUTABLE_DIR,
+  *SERVICE_SOURCES_NO_MAIN,
+  *SERVICE_TESTS,
+  __FILE__,
+  MRUBY_NO_GENERATIONAL_GC_LIB,
+]) do
+  sh(
+    CXX,
+    "--std=c++11",
+    "-Wall",
+    "-Wextra",
+    "-Imsgpack/include",
+    "-Imruby/include",
+    "-I#{GOOGLE_TEST_DIR}/include",
+    "-I#{GOOGLE_TEST_DIR}",
+    "-I.",
+    "-L#{MRUBY_NO_GENERATIONAL_GC_LIB_DIR}",
+    *Flags.cflags,
+    *Flags.defines_with_no_gc.map { |define| "-D#{define}" },
+    "-o", SERVICE_NO_GENERATIONAL_GC_TESTS_EXECUTABLE,
+    *SERVICE_SOURCES_NO_MAIN,
+    *SERVICE_TESTS,
+    "-lmruby",
+    "-lpthread",
+    *LIBSECCOMP_CFLAGS,
+  )
+end
+
 file(MRUBY_LIB => [:"mruby:compile", :"libseccomp:compile"])
+file(MRUBY_NO_GENERATIONAL_GC_LIB => [:"mruby:compile_no_gen_gc", :"libseccomp:compile"])
 
 task(clean: [:"mruby:mrproper", :"libseccomp:mrproper"]) do
   sh("rm", SERVICE_EXECUTABLE)
+  sh("rm", SERVICE_EXECUTABLE_NO_GENERATIONAL_GC)
 end
 
 task(mrproper: [:clean, :"mruby:mrproper", :"libseccomp:mrproper"])
 
-task(default: [SERVICE_EXECUTABLE, :test])
+task(default: [SERVICE_EXECUTABLE, SERVICE_EXECUTABLE_NO_GENERATIONAL_GC, :test])
 
-task(test: [SERVICE_TESTS_EXECUTABLE]) do
+task(test: [SERVICE_TESTS_EXECUTABLE, SERVICE_NO_GENERATIONAL_GC_TESTS_EXECUTABLE]) do
   sh(SERVICE_TESTS_EXECUTABLE)
+  sh(SERVICE_NO_GENERATIONAL_GC_TESTS_EXECUTABLE)
 end
 
 namespace(:mruby) do
-  def within_mruby
+  def within_mruby(config: '../mruby_config.rb')
     Dir.chdir(MRUBY_DIR) do
       original_mruby_config = ENV['MRUBY_CONFIG']
       begin
-        ENV['MRUBY_CONFIG'] = '../mruby_config.rb'
+        ENV['MRUBY_CONFIG'] = config
         yield
       ensure
         ENV['MRUBY_CONFIG'] = original_mruby_config
@@ -127,6 +186,15 @@ namespace(:mruby) do
 
   task(:compile) do
     within_mruby do
+      sh("ruby", "./minirake")
+    end
+  end
+
+  task(:compile_no_gen_gc) do
+    within_mruby(config: '../mruby_no_gen_gc_config.rb') do
+      extra_args = []
+      extra_args << '' if RUBY_PLATFORM.match?(/darwin/i)
+      sh('sed', '-i', *extra_args, 's/{ :verbose => $verbose }/verbose: $verbose/', 'Rakefile')
       sh("ruby", "./minirake")
     end
   end
