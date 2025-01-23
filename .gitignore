@@ -3,7 +3,11 @@
 .bundle
 tmp
 bin/enterprise_script_service
+bin/enterprise_script_service_no_gen_gc
 bin/enterprise_script_service_tests
+bin/enterprise_script_service_no_gen_gc_tests
 bin/enterprise_script_service.dSYM
+bin/enterprise_script_service_no_gen_gc.dSYM
 bin/enterprise_script_service_tests.dSYM
+bin/enterprise_script_service_no_gen_gc_tests.dSYM
 spec/examples.txt

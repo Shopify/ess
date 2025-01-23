@@ -14,7 +14,7 @@ require("enterprise_script_service/stat")
 
 module EnterpriseScriptService
   class << self
-    def run(input:, sources:, instructions: nil, timeout: 1, instruction_quota: 100000, instruction_quota_start: 0, memory_quota: 8 << 20)
+    def run(input:, sources:, instructions: nil, timeout: 1, instruction_quota: 100000, instruction_quota_start: 0, memory_quota: 8 << 20, generational_gc: true)
       packer = EnterpriseScriptService::Protocol.packer_factory.packer
 
       payload = {input: input, sources: sources}
@@ -26,7 +26,7 @@ module EnterpriseScriptService
 
       spawner = EnterpriseScriptService::Spawner.new
       service_process = EnterpriseScriptService::ServiceProcess.new(
-        service_path,
+        generational_gc ? service_path : service_path_no_generational_gc,
         spawner,
         instruction_quota,
         instruction_quota_start,
@@ -46,6 +46,13 @@ module EnterpriseScriptService
       @service_path ||= begin
         base_path = Pathname.new(__dir__).parent
         base_path.join("bin/enterprise_script_service".freeze).to_s
+      end
+    end
+
+    def service_path_no_generational_gc
+      @service_path_no_generational_gc ||= begin
+        base_path = Pathname.new(__dir__).parent
+        base_path.join("bin/enterprise_script_service_no_gen_gc".freeze).to_s
       end
     end
   end

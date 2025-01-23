@@ -72,6 +72,29 @@ expect(result.stdout).to eq("hello")
 <6> starts counting the instructions at index 1 of the `sources` array
 <7> creates an 8 megabyte memory pool in which the script will run
 
+=== Turning off generational garbage collection
+
+In some cases, you may want to run a script in an mruby environment with the generational garbage collector turned off. To do that, you can run:
+
+[source, ruby]
+----
+result = EnterpriseScriptService.run(
+  input: {result: [26803196617, 0.475]},
+  sources: [
+    ["stdout", "@stdout_buffer = 'hello'"],
+    ["foo", "@output = @input[:result]"],
+  ],
+  instructions: nil,
+  timeout: 10.0,
+  instruction_quota: 100000,
+  instruction_quota_start: 1,
+  memory_quota: 8 << 20,
+  generational_gc: false
+)
+----
+
+Take note of the last argument of `generational_gc: false`.
+
 == Where are things?
 
 === C++ sources

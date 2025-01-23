@@ -254,4 +254,19 @@ RSpec.describe(EnterpriseScriptService) do
     expect(result.output).to eq(nil)
     expect(result.stdout).to eq("hello")
   end
+
+  it "handles generational_gc being false" do
+    result = EnterpriseScriptService.run(
+      input: {result: [26803196617, 0.475]},
+      sources: [
+        ["stdout", "@stdout_buffer = 'hello'"],
+        ["foo", "@output = @input[:result]"],
+      ],
+      timeout: 1000,
+      generational_gc: false
+    )
+    expect(result.success?).to be(true)
+    expect(result.output).to eq([26803196617, 0.475])
+    expect(result.stdout).to eq("hello")
+  end
 end
