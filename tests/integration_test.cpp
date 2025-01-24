@@ -48,9 +48,9 @@ TEST(integration_test, happy_path) {
   char output[BUFSIZE];
   msgpack::unpacker pac;
   ssize_t r, in = 0;
-  while ((r = read(fd[0], &output + in, (size_t) (BUFSIZE - in))) > 0) {
+  while ((r = read(fd[0], output + in, (size_t) (BUFSIZE - in))) > 0) {
     pac.reserve_buffer(r);
-    memcpy(pac.buffer(), &output + in, r);
+    memcpy(pac.buffer(), output + in, r);
     pac.buffer_consumed(r);
   }
 
