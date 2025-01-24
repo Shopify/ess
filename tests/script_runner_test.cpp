@@ -104,7 +104,7 @@ TEST(script_runner_test, runs_all_scripts) {
 
   char output[BUFSIZE];
   ssize_t r, in = 0;
-  while ((r = read(fd[0], &output + in, (size_t) (BUFSIZE - in))) > 0) {
+  while ((r = read(fd[0], output + in, (size_t) (BUFSIZE - in))) > 0) {
     if ((in += r) >= BUFSIZE) break;
   }
 
