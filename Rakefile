@@ -16,12 +16,10 @@ task(compile: []) do
   end
 end
 
-Rake::Task[:clean].enhance do
-  sh("script/mkmruby", "clean")
-end
-
-Rake::Task[:clobber].enhance do
-  sh("script/mkmruby", "clobber")
+task(clean: []) do
+  Dir.chdir("ext/enterprise_script_service") do
+    sh("../../bin/rake", "clean")
+  end
 end
 
 task(mrproper: []) do

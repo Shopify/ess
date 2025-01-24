@@ -9,7 +9,7 @@ commands:
   recompile:
     syntax: ""
     desc: "Compiles native extention"
-    run: bin/rake clobber compile
+    run: bin/rake mrproper compile
   compile:
     syntax: ""
     desc: "Compiles native extention"
