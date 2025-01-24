@@ -295,7 +295,72 @@ RSpec.describe(EnterpriseScriptService) do
     expect(result.success?).to be(true)
     expect(result.output).to eq([26803196617, 0.475])
     expect(result.stdout).to eq("hello")
-    end
+  end
+
+  it "calls the binary with GC when generational gc is unset" do
+    expect(EnterpriseScriptService::ServiceProcess).to receive(:new).with(
+      Pathname.new(__dir__).parent.join("bin/enterprise_script_service").to_s,
+      anything,
+      anything,
+      anything
+    )
+    runner = double("runner")
+    allow(runner).to receive(:run)
+    allow(EnterpriseScriptService::Runner).to receive(:new).and_return(runner)
+
+    EnterpriseScriptService.run(
+      input: {result: [26803196617, 0.475]},
+      sources: [
+        ["stdout", "@stdout_buffer = 'hello'"],
+        ["foo", "@output = @input[:result]"],
+      ],
+      timeout: 1000,
+    )
+  end
+
+  it "calls the binary with GC when generational gc is true" do
+    expect(EnterpriseScriptService::ServiceProcess).to receive(:new).with(
+      Pathname.new(__dir__).parent.join("bin/enterprise_script_service").to_s,
+      anything,
+      anything,
+      anything
+    )
+    runner = double("runner")
+    allow(runner).to receive(:run)
+    allow(EnterpriseScriptService::Runner).to receive(:new).and_return(runner)
+
+    EnterpriseScriptService.run(
+      input: {result: [26803196617, 0.475]},
+      sources: [
+        ["stdout", "@stdout_buffer = 'hello'"],
+        ["foo", "@output = @input[:result]"],
+      ],
+      timeout: 1000,
+      generational_gc: true
+    )
+  end
+
+  it "calls the binary with no gen GC when generational gc is false" do
+    expect(EnterpriseScriptService::ServiceProcess).to receive(:new).with(
+      Pathname.new(__dir__).parent.join("bin/enterprise_script_service_no_gen_gc").to_s,
+      anything,
+      anything,
+      anything
+    )
+    runner = double("runner")
+    allow(runner).to receive(:run)
+    allow(EnterpriseScriptService::Runner).to receive(:new).and_return(runner)
+
+    EnterpriseScriptService.run(
+      input: {result: [26803196617, 0.475]},
+      sources: [
+        ["stdout", "@stdout_buffer = 'hello'"],
+        ["foo", "@output = @input[:result]"],
+      ],
+      timeout: 1000,
+      generational_gc: false
+    )
+  end
 
   private
 
