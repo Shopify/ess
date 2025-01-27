@@ -60,6 +60,29 @@ expect(result.stdout).to eq("hello")
 <2> two "scripts" to be executed, one sets the `@stdout_buffer` to a value, the second puts the value associated to the key `:result` of the map used passed in in <1>
 <3> give the ESS a 1000 second time quota to spawn, init, inject, eval and finally output the result back.
 
+=== Turning off generational garbage collection
+
+In some cases, you may want to run a script in an mruby environment with the generational garbage collector turned off. To do that, you can run:
+
+[source, ruby]
+----
+result = EnterpriseScriptService.run(
+  input: {result: [26803196617, 0.475]},
+  sources: [
+    ["stdout", "@stdout_buffer = 'hello'"],
+    ["foo", "@output = @input[:result]"],
+  ],
+  instructions: nil,
+  timeout: 10.0,
+  instruction_quota: 100000,
+  instruction_quota_start: 1,
+  memory_quota: 8 << 20,
+  generational_gc: false
+)
+----
+
+Take note of the last argument of `generational_gc: false`.
+
 == Where are things?
 
 === C++ sources

@@ -27,8 +27,16 @@ module Flags
       )
     end
 
+    def io_safe_defines_with_no_gc
+      io_safe_defines + %w(MRB_GC_TURN_OFF_GENERATIONAL)
+    end
+
     def defines
       io_safe_defines + %w(MRB_DISABLE_STDIO)
+    end
+
+    def defines_with_no_gc
+      defines + %w(MRB_GC_TURN_OFF_GENERATIONAL)
     end
   end
 end
