@@ -193,7 +193,8 @@ namespace(:mruby) do
   task(:compile_no_gen_gc) do
     within_mruby(config: '../mruby_no_gen_gc_config.rb') do
       extra_args = []
-      extra_args << '' if RUBY_PLATFORM.match?(/darwin/i)
+      is_bsd_sed = RUBY_PLATFORM.match?(/darwin/i) && !ENV.key?('NIX_CC')
+      extra_args << '' if is_bsd_sed
       sh('sed', '-i', *extra_args, 's/{ :verbose => $verbose }/verbose: $verbose/', 'Rakefile')
       sh("ruby", "./minirake")
     end
