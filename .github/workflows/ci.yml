@@ -20,7 +20,7 @@ jobs:
           submodules: true
 
       - name: Set up Ruby ${{ matrix.ruby }}
-        uses: ruby/setup-ruby@e34163cd15f4bb403dcd72d98e295997e6a55798 # v1.238.0
+        uses: ruby/setup-ruby@d354de180d0c9e813cfddfcbdc079945d4be589b # v1.275.0
         with:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: true
