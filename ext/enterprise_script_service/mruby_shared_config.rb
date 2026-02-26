@@ -19,6 +19,10 @@ def build(defines)
       cc.flags += Flags.cflags
       cc.defines += defines
     end
+
+    conf.linker do |linker|
+      linker.command = conf.cc.command
+    end
   end
 end
 
@@ -36,6 +40,10 @@ def crossbuild(directory, defines)
       cc.flags += %w(-fPIC)
       cc.flags += Flags.cflags
       cc.defines += defines
+    end
+
+    conf.linker do |linker|
+      linker.command = conf.cc.command
     end
   end
 end
