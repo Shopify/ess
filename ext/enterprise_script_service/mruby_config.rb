@@ -22,6 +22,7 @@ MRuby::Build.new do |conf|
   end
 
   conf.linker do |linker|
+    linker.command = conf.cc.command
     linker.library_paths += Flags.library_paths
   end
 end
@@ -42,6 +43,7 @@ MRuby::CrossBuild.new("sandbox") do |conf|
   end
 
   conf.linker do |linker|
+    linker.command = conf.cc.command
     linker.library_paths += Flags.library_paths
   end
 end

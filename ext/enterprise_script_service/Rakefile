@@ -127,9 +127,9 @@ namespace(:mruby) do
 
   task(:compile) do
     within_mruby do
-      extra_args = []
-      extra_args << '' if RUBY_PLATFORM.match?(/darwin/i)
-      sh('sed', '-i', *extra_args, 's/{ :verbose => $verbose }/verbose: $verbose/', 'Rakefile')
+      content = File.read('Rakefile')
+      content.gsub!('{ :verbose => $verbose }', 'verbose: $verbose')
+      File.write('Rakefile', content)
       sh("ruby", "./minirake")
     end
   end
