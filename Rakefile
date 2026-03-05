@@ -9,9 +9,10 @@ end
 
 task(compile: []) do
   Dir.chdir("ext/enterprise_script_service") do
-    extra_args = []
-    extra_args << '' if RUBY_PLATFORM.match?(/darwin/i)
-    sh('sed', "-i", *extra_args, 's/{ :verbose => $verbose }/verbose: $verbose/', "mruby/Rakefile")
+    mruby_rakefile = "mruby/Rakefile"
+    content = File.read(mruby_rakefile)
+    content.gsub!('{ :verbose => $verbose }', 'verbose: $verbose')
+    File.write(mruby_rakefile, content)
     sh("../../bin/rake")
   end
 end

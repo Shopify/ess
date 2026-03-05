@@ -10,6 +10,7 @@ GEM
     diff-lcs (1.5.1)
     domain_name (0.5.20190701)
       unf (>= 0.0.5, < 1.0.0)
+    getoptlong (0.2.1)
     highline (2.0.3)
     http-accept (1.7.0)
     http-cookie (1.0.5)
@@ -60,6 +61,7 @@ PLATFORMS
 DEPENDENCIES
   bundler
   enterprise_script_service!
+  getoptlong
   package_cloud
   rake
   rake-compiler (~> 0.9)
